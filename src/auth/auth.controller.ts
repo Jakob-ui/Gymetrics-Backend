@@ -1,15 +1,8 @@
-import {
-  Body,
-  Controller,
-  Post,
-  HttpCode,
-  HttpStatus,
-  Get,
-  Request,
-} from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RequestLoginDto } from './Request/login.request.dto';
 import { Public } from './decorators/public.decorator';
+import { RequestRegisterDto } from './Request/register.request.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +15,10 @@ export class AuthController {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  @Post('register')
+  async register(@Body() registerDto: RequestRegisterDto) {
+    return this.authService.register(registerDto);
   }
 }
