@@ -1,8 +1,8 @@
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RequestLoginDto } from './Request/login.request.dto';
+import { LoginRequestDto } from './Request/login.request.dto';
 import { Public } from './decorators/public.decorator';
-import { RequestRegisterDto } from './Request/register.request.dto';
+import { RegisterRequestDto } from './Request/register.request.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -11,14 +11,14 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Public()
   @Post('login')
-  async signIn(@Body() signInDto: RequestLoginDto) {
+  async signIn(@Body() signInDto: LoginRequestDto) {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
   @HttpCode(HttpStatus.CREATED)
   @Public()
   @Post('register')
-  async register(@Body() registerDto: RequestRegisterDto) {
+  async register(@Body() registerDto: RegisterRequestDto) {
     return this.authService.register(registerDto);
   }
 }

@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export class ResponseUserDto {
+export class UserResponseDto {
   _id: Types.ObjectId;
   userId: string;
   name: string;
