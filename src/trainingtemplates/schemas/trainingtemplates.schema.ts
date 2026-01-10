@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
+import { TemplateResponseDto } from '../Response/template.response.dto';
 
 @Schema({ _id: false })
 export class Exercise {
@@ -44,6 +45,18 @@ export class TrainingTemplate extends Document {
 
   @Prop({ type: [ExerciseSchema], default: [] })
   plan: Exercise[];
+
+  static mapToDto(entity: TrainingTemplate): TemplateResponseDto {
+    return new TemplateResponseDto({
+      id: entity._id.toString(),
+      title: entity.title,
+      description: entity.description,
+      status: entity.status,
+      created_date: entity._createdAt,
+      updated_date: entity._updatedAt,
+      plan: entity.plan,
+    });
+  }
 }
 
 export const TrainingTemplateSchema =

@@ -8,4 +8,16 @@ export class UserRequestDto {
   @IsString()
   @IsNotEmpty()
   email: string;
+
+  @IsString()
+  gender: string;
+
+  @IsString()
+  height: string;
+
+  @IsString()
+  weigth: string;
+
+  @IsString()
+  msucle: string;
 }

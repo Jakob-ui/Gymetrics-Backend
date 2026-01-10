@@ -1,32 +1,45 @@
-import { Body, Controller, Get, Param, Delete, Put } from '@nestjs/common';
+import { Body, Controller, Get, Delete, Put, Request } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserRequestDto } from './dtos/Request/user.request.dto';
+import { UserRequestDto } from './dtos/Request/updateUser.request.dto';
 import { UserResponseDto } from './dtos/Response/user.response.dto';
+import { UserProfileResponseDto } from './dtos/Response/userProfile.response.dto';
 
-@Controller('users')
+interface AuthenticatedRequest extends Request {
+  user: { userId: string };
+}
+
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async findAll(): Promise<UserResponseDto[]> {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  async findById(@Param('id') id: string): Promise<UserResponseDto> {
-    return this.userService.findById(id);
-  }
-
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() requestDto: UserRequestDto,
+  async findById(
+    @Request() req: AuthenticatedRequest,
   ): Promise<UserResponseDto> {
-    return this.userService.update(id, requestDto);
+    const userId = req.user.userId;
+    return this.userService.findById(userId);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.userService.delete(id);
+  @Get('profile')
+  async findProfile(
+    @Request() req: AuthenticatedRequest,
+  ): Promise<UserProfileResponseDto> {
+    const userId = req.user.userId;
+    return this.userService.findProfile(userId);
+  }
+
+  @Put()
+  async update(
+    @Request() req: AuthenticatedRequest,
+    @Body() requestDto: UserRequestDto,
+  ): Promise<UserProfileResponseDto> {
+    const userId = req.user.userId;
+    return this.userService.update(userId, requestDto);
+  }
+
+  @Delete()
+  async delete(@Request() req: AuthenticatedRequest): Promise<boolean> {
+    const userId = req.user.userId;
+    return this.userService.delete(userId);
   }
 }

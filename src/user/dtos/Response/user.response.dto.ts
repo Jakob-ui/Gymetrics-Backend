@@ -1,10 +1,11 @@
 import { Types } from 'mongoose';
 
 export class UserResponseDto {
-  _id: Types.ObjectId;
-  userId: string;
+  id: Types.ObjectId;
   name: string;
   email: string;
-  _createdAt: Date;
-  _updatedAt: Date;
+
+  constructor(partial?: Partial<UserResponseDto>) {
+    Object.assign(this, partial);
+  }
 }
