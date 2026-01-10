@@ -34,7 +34,7 @@ export class UserService {
       .findByIdAndUpdate(id, requestDto, { new: true })
       .exec();
     if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User not found`);
     }
     return User.mapToProfileResponseDto(user);
   }
@@ -42,7 +42,7 @@ export class UserService {
   async delete(id: string): Promise<boolean> {
     const user = await this.userModel.findByIdAndDelete(id).exec();
     if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`User not found`);
     }
     return true;
   }
