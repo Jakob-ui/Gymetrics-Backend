@@ -16,11 +16,11 @@ export class UserProfileResponseDto {
 
   @IsOptional()
   @IsString()
-  weigth: string;
+  weight: string;
 
   @IsOptional()
   @IsString()
-  msucle?: string;
+  muscle: string;
 
   _createdAt: Date;
   _updatedAt: Date;

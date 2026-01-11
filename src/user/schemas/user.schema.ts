@@ -10,8 +10,8 @@ export class User extends Document {
   @Prop({ required: true }) password: string;
   @Prop() gender: string;
   @Prop() height: string;
-  @Prop() weigth: string;
-  @Prop() msucle: string;
+  @Prop() weight: string;
+  @Prop() muscle: string;
   @Prop() _createdAt: Date;
   @Prop() _updatedAt: Date;
 
@@ -21,8 +21,10 @@ export class User extends Document {
       email: user.email,
       gender: user.gender,
       height: user.height,
-      weigth: user.weigth,
-      msucle: user.msucle,
+      weight: user.weight,
+      muscle: user.muscle,
+      _createdAt: user._createdAt,
+      _updatedAt: user._updatedAt,
     });
   }
 
