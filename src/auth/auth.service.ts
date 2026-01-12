@@ -21,10 +21,7 @@ export class AuthService {
     @InjectModel(Auth.name) private authModel: Model<Auth>,
   ) {}
 
-  async signIn(
-    email: string,
-    pass: string,
-  ): Promise<{ AuthResponseDto: AuthResponseDto }> {
+  async signIn(email: string, pass: string): Promise<AuthResponseDto> {
     const user = await this.userService.findOne(email);
 
     if (!user || !(await bcrypt.compare(pass, user.password))) {
@@ -34,17 +31,10 @@ export class AuthService {
     const payload = { userId: user._id, username: user.name };
     const access_token = await this.jwtService.signAsync(payload);
 
-    const userResponse: AuthResponseDto = {
-      userId: user._id.toString(),
-      name: user.name,
-      token: access_token,
-    };
-    return { AuthResponseDto: userResponse };
+    return Auth.mapToDto(user._id.toString(), user.name, access_token);
   }
 
-  async register(
-    registerDto: RegisterRequestDto,
-  ): Promise<{ AuthResponseDto: AuthResponseDto }> {
+  async register(registerDto: RegisterRequestDto): Promise<AuthResponseDto> {
     const existingUser = await this.userService.findOne(registerDto.email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists!');
@@ -64,6 +54,6 @@ export class AuthService {
       throw new BadRequestException('Login Failed');
     }
 
-    return { AuthResponseDto: userResponse.AuthResponseDto };
+    return userResponse;
   }
 }
