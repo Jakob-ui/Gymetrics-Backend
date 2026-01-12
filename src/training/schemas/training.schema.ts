@@ -2,9 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Document } from 'mongoose';
 import { TrainingTemplate } from 'src/trainingtemplates/schemas/trainingtemplates.schema';
 import { User } from 'src/user/schemas/user.schema';
+import { TrainingResponseDto } from '../Response/training.response.dto';
 
-@Schema({ _id: false })
+@Schema({ _id: true })
 export class Exercise {
+  _id?: Types.ObjectId;
+
   @Prop({ required: true })
   title: string;
 
@@ -51,7 +54,7 @@ export class Training extends Document {
   @Prop({ required: false })
   description?: string;
 
-  @Prop({ required: true, default: false })
+  @Prop({ required: true, default: true })
   active: boolean;
 
   @Prop({ required: true })
@@ -68,6 +71,28 @@ export class Training extends Document {
 
   @Prop({ type: [ExerciseSchema], default: [] })
   plan: Exercise[];
+
+  static mapToDto(training: Training): TrainingResponseDto {
+    return new TrainingResponseDto({
+      _id: training._id.toString(),
+      templateId: training.templateId?.toString?.(),
+      title: training.title,
+      description: training.description,
+      activeDate: training.activeDate,
+      icon: training.icon,
+      _updatedAt: training._updatedAt,
+      _createdAt: training._createdAt,
+      plan: training.plan.map((ex) => ({
+        _id: ex._id?.toString?.(),
+        title: ex.title,
+        reps: ex.reps,
+        repsDone: ex.repsDone,
+        weight: ex.weight,
+        weightDone: ex.weightDone,
+        factor: ex.factor,
+      })),
+    });
+  }
 }
 
 export const TrainingSchema = SchemaFactory.createForClass(Training);
