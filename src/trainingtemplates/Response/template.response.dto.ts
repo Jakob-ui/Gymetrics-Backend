@@ -28,6 +28,9 @@ export class TemplateResponseDto {
   status: boolean;
 
   @Expose()
+  icon: string;
+
+  @Expose()
   created_date: Date;
 
   @Expose()

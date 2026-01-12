@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { TemplateResponseDto } from '../Response/template.response.dto';
+import { TemplateOverviewResponseDto } from '../Response/templateoverview.response.dto';
 
 @Schema({ _id: false })
 export class Exercise {
@@ -37,6 +38,9 @@ export class TrainingTemplate extends Document {
   @Prop({ required: true, default: false })
   status: boolean;
 
+  @Prop({ required: false })
+  icon?: string;
+
   @Prop()
   _updatedAt: Date;
 
@@ -52,9 +56,24 @@ export class TrainingTemplate extends Document {
       title: entity.title,
       description: entity.description,
       status: entity.status,
+      icon: entity.icon,
       created_date: entity._createdAt,
       updated_date: entity._updatedAt,
       plan: entity.plan,
+    });
+  }
+
+  static mapToOverviewDto(
+    entity: TrainingTemplate,
+  ): TemplateOverviewResponseDto {
+    return new TemplateOverviewResponseDto({
+      id: entity._id.toString(),
+      title: entity.title,
+      description: entity.description,
+      status: entity.status,
+      icon: entity.icon,
+      created_date: entity._createdAt,
+      updated_date: entity._updatedAt,
     });
   }
 }
