@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/auth.guard';
 import { ConfigModule } from '@nestjs/config';
 import { TrainingtemplatesModule } from './trainingtemplates/trainingtemplates.module';
+import { TrainingModule } from './training/training.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TrainingtemplatesModule } from './trainingtemplates/trainingtemplates.m
     UserModule,
     AuthModule,
     TrainingtemplatesModule,
+    TrainingModule,
   ],
   controllers: [AppController],
   providers: [

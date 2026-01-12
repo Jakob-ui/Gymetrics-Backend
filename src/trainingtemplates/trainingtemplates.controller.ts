@@ -11,10 +11,7 @@ import {
 } from '@nestjs/common';
 import { TemplateRequestDto } from './Request/template.request.dto';
 import { TrainingtemplatesService } from './trainingtemplates.service';
-
-interface AuthenticatedRequest extends Request {
-  user: { userId: string };
-}
+import * as appController from 'src/app.controller';
 
 @Controller('templates')
 export class TrainingtemplatesController {
@@ -23,7 +20,7 @@ export class TrainingtemplatesController {
   @Post()
   async createNewTemplate(
     @Body() createDto: TemplateRequestDto,
-    @Request() req: AuthenticatedRequest,
+    @Request() req: appController.AuthenticatedRequest,
   ) {
     const userId = req.user.userId;
     return this.templateService.create(createDto, userId);
@@ -31,7 +28,7 @@ export class TrainingtemplatesController {
 
   @Put(':id')
   async updateTemplate(
-    @Request() req: AuthenticatedRequest,
+    @Request() req: appController.AuthenticatedRequest,
     @Param('id') id: string,
     @Body() reqDto: TemplateRequestDto,
   ) {
@@ -42,7 +39,7 @@ export class TrainingtemplatesController {
   @Delete(':id')
   @HttpCode(204)
   async deleteTemplate(
-    @Request() req: AuthenticatedRequest,
+    @Request() req: appController.AuthenticatedRequest,
     @Param('id') id: string,
   ) {
     const userId = req.user.userId;
@@ -52,14 +49,14 @@ export class TrainingtemplatesController {
   @Get(':id')
   async findTemplate(
     @Param('id') id: string,
-    @Request() req: AuthenticatedRequest,
+    @Request() req: appController.AuthenticatedRequest,
   ) {
     const userId = req.user.userId;
     return this.templateService.findTemplateForUser(userId, id);
   }
 
   @Get()
-  async findAllForUser(@Request() req: AuthenticatedRequest) {
+  async findAllForUser(@Request() req: appController.AuthenticatedRequest) {
     const userId = req.user.userId;
     return this.templateService.findAllForUser(userId);
   }

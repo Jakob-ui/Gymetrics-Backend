@@ -1,7 +1,9 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Public } from './auth/decorators/public.decorator';
-
+export interface AuthenticatedRequest extends Request {
+  user: { userId: string };
+}
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
