@@ -67,10 +67,20 @@ export class TrainingtemplatesService {
     return TrainingTemplate.mapToDto(template);
   }
 
-  async findAllForUser(userId: string): Promise<TemplateOverviewResponseDto[]> {
+  async findAllForUser(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<TemplateOverviewResponseDto[]> {
+    const skip = (page - 1) * limit;
     const templates = await this.templateModel
       .find({ userId: new Types.ObjectId(userId) })
+      .skip(skip)
+      .limit(limit)
       .exec();
+    if (!templates) {
+      throw new NotFoundException('No Templates found');
+    }
     return templates.map((entity) => TrainingTemplate.mapToOverviewDto(entity));
   }
 }

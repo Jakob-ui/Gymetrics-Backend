@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Request,
+} from '@nestjs/common';
 import * as appController from 'src/app.controller';
 import { TrainingService } from './training.service';
 import { TrainingRequestDto } from './Request/training.request.dto';
@@ -38,5 +46,15 @@ export class TrainingController {
   ) {
     const userId = req.user.userId;
     return await this.trainingService.getTraining(userId, trainingId);
+  }
+
+  @Get()
+  async findAllForUser(
+    @Request() req: appController.AuthenticatedRequest,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const userId = req.user.userId;
+    return await this.trainingService.findAllForUser(userId, page, limit);
   }
 }

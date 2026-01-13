@@ -3,10 +3,13 @@ import { Types, Document } from 'mongoose';
 import { TrainingTemplate } from 'src/trainingtemplates/schemas/trainingtemplates.schema';
 import { User } from 'src/user/schemas/user.schema';
 import { TrainingResponseDto } from '../Response/training.response.dto';
+import { TrainingOverviewResponseDto } from '../Response/training.overview.response.dto';
 
 @Schema({ _id: true })
 export class Exercise {
   _id?: Types.ObjectId;
+
+  exerciseId?: Types.ObjectId;
 
   @Prop({ required: true })
   title: string;
@@ -79,11 +82,12 @@ export class Training extends Document {
       title: training.title,
       description: training.description,
       activeDate: training.activeDate,
+      active: training.active,
       icon: training.icon,
       _updatedAt: training._updatedAt,
       _createdAt: training._createdAt,
       plan: training.plan.map((ex) => ({
-        _id: ex._id?.toString?.(),
+        exerciseId: ex._id?.toString?.(),
         title: ex.title,
         reps: ex.reps,
         repsDone: ex.repsDone,
@@ -91,6 +95,18 @@ export class Training extends Document {
         weightDone: ex.weightDone,
         factor: ex.factor,
       })),
+    });
+  }
+
+  static mapToOverviewDto(entity: Training): TrainingOverviewResponseDto {
+    return new TrainingOverviewResponseDto({
+      id: entity._id.toString(),
+      title: entity.title,
+      description: entity.description,
+      status: entity.active,
+      icon: entity.icon,
+      created_date: entity._createdAt,
+      updated_date: entity._updatedAt,
     });
   }
 }

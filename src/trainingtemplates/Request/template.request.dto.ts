@@ -40,6 +40,10 @@ export class TemplateRequestDto {
   @IsOptional()
   status?: boolean;
 
+  @IsString()
+  @IsOptional()
+  icon?: boolean;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ExerciseDto)

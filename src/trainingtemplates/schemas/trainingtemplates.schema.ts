@@ -4,8 +4,10 @@ import { User } from 'src/user/schemas/user.schema';
 import { TemplateResponseDto } from '../Response/template.response.dto';
 import { TemplateOverviewResponseDto } from '../Response/templateoverview.response.dto';
 
-@Schema({ _id: false })
+@Schema({ _id: true })
 export class Exercise {
+  _id?: Types.ObjectId;
+
   @Prop({ required: true })
   title: string;
 
@@ -39,7 +41,7 @@ export class TrainingTemplate extends Document {
   status: boolean;
 
   @Prop({ required: false })
-  icon?: string;
+  icon: string;
 
   @Prop()
   _updatedAt: Date;

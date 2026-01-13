@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Request,
 } from '@nestjs/common';
 import { TemplateRequestDto } from './Request/template.request.dto';
@@ -56,8 +57,12 @@ export class TrainingtemplatesController {
   }
 
   @Get()
-  async findAllForUser(@Request() req: appController.AuthenticatedRequest) {
+  async findAllForUser(
+    @Request() req: appController.AuthenticatedRequest,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
     const userId = req.user.userId;
-    return this.templateService.findAllForUser(userId);
+    return this.templateService.findAllForUser(userId, page, limit);
   }
 }

@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { TrainingTemplate } from 'src/trainingtemplates/schemas/trainingtemplates.schema';
 import { ExerciseRequestDto } from './Request/trainingUpdate.request.dto';
 import { TrainingResponseDto } from './Response/training.response.dto';
+import { TrainingOverviewResponseDto } from './Response/training.overview.response.dto';
 
 @Injectable()
 export class TrainingService {
@@ -30,7 +31,15 @@ export class TrainingService {
     });
     index = index + 1;
 
-    const { _id, ...templateObjWithoutId } = trainingTemplate.toObject();
+    const { _id, plan, ...templateObjWithoutId } = trainingTemplate.toObject();
+
+    const copiedPlan = plan.map((exercise) => ({
+      _id: exercise._id,
+      title: exercise.title,
+      reps: exercise.reps,
+      weight: exercise.weight,
+      factor: exercise.factor,
+    }));
 
     const trainingData = {
       ...templateObjWithoutId,
@@ -38,6 +47,7 @@ export class TrainingService {
       index: index,
       userId: new Types.ObjectId(userId),
       templateId: _id,
+      plan: copiedPlan,
     };
     const newTraining = new this.trainingModel(trainingData);
     await newTraining.save();
@@ -91,5 +101,22 @@ export class TrainingService {
       return [Training.mapToDto(training), Training.mapToDto(previousTraining)];
     }
     return [Training.mapToDto(training)];
+  }
+
+  async findAllForUser(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<TrainingOverviewResponseDto[]> {
+    const skip = (page - 1) * limit;
+    const trainingOverview = await this.trainingModel
+      .find({ userId: new Types.ObjectId(userId), active: false })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+    if (!trainingOverview) {
+      throw new NotFoundException('No Trainings found');
+    }
+    return trainingOverview.map((entity) => Training.mapToOverviewDto(entity));
   }
 }
