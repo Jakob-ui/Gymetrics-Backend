@@ -17,6 +17,9 @@ export class TrainingOverviewResponseDto {
   icon: string;
 
   @Expose()
+  activeDate: Date;
+
+  @Expose()
   created_date: Date;
 
   @Expose()

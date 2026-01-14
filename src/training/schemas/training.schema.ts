@@ -104,6 +104,7 @@ export class Training extends Document {
       title: entity.title,
       description: entity.description,
       status: entity.active,
+      activeDate: entity.activeDate,
       icon: entity.icon,
       created_date: entity._createdAt,
       updated_date: entity._updatedAt,

@@ -25,6 +25,32 @@ export class TrainingController {
     await this.trainingService.createTraining(userId, createDto);
   }
 
+  @Get()
+  async findAllForUser(
+    @Request() req: appController.AuthenticatedRequest,
+    @Query('active') active: boolean,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    const userId = req.user.userId;
+    return await this.trainingService.findAllForUser(
+      userId,
+      active,
+      page,
+      limit,
+    );
+  }
+
+  @Get('nextTraining')
+  async findNearestactive(
+    @Request() req: appController.AuthenticatedRequest,
+    @Query('date') date?: string,
+  ) {
+    const userId = req.user.userId;
+    const dateObj = date ? new Date(date) : new Date();
+    return await this.trainingService.findNearestactive(userId, dateObj);
+  }
+
   @Post(':id')
   async updateExercise(
     @Request() req: appController.AuthenticatedRequest,
@@ -46,15 +72,5 @@ export class TrainingController {
   ) {
     const userId = req.user.userId;
     return await this.trainingService.getTraining(userId, trainingId);
-  }
-
-  @Get()
-  async findAllForUser(
-    @Request() req: appController.AuthenticatedRequest,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ) {
-    const userId = req.user.userId;
-    return await this.trainingService.findAllForUser(userId, page, limit);
   }
 }

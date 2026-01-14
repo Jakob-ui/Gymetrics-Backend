@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Training } from './schemas/training.schema';
 import { Model, Types } from 'mongoose';
 import { TrainingRequestDto } from './Request/training.request.dto';
@@ -17,6 +21,12 @@ export class TrainingService {
   ) {}
 
   async createTraining(userId: string, trainingInfo: TrainingRequestDto) {
+    const currentDate = new Date();
+    if (trainingInfo.activeDate <= currentDate) {
+      throw new BadRequestException(
+        'Cant create new training before current Date',
+      );
+    }
     const templateId = trainingInfo.templateId;
     const trainingTemplate = await this.trainingTemplateModel.findOne({
       _id: new Types.ObjectId(templateId),
@@ -105,18 +115,64 @@ export class TrainingService {
 
   async findAllForUser(
     userId: string,
+    active: boolean,
     page: number,
     limit: number,
   ): Promise<TrainingOverviewResponseDto[]> {
     const skip = (page - 1) * limit;
-    const trainingOverview = await this.trainingModel
-      .find({ userId: new Types.ObjectId(userId), active: false })
-      .skip(skip)
-      .limit(limit)
-      .exec();
+    let trainingOverview: Training[];
+    if (active === undefined) {
+      trainingOverview = await this.trainingModel
+        .find({ userId: new Types.ObjectId(userId) })
+        .skip(skip)
+        .limit(limit)
+        .exec();
+    } else {
+      trainingOverview = await this.trainingModel
+        .find({ userId: new Types.ObjectId(userId), active: active })
+        .skip(skip)
+        .limit(limit)
+        .exec();
+    }
     if (!trainingOverview) {
       throw new NotFoundException('No Trainings found');
     }
     return trainingOverview.map((entity) => Training.mapToOverviewDto(entity));
+  }
+
+  async findNearestactive(
+    userId: string,
+    date: Date,
+  ): Promise<TrainingOverviewResponseDto | null> {
+    const result = await this.trainingModel.aggregate([
+      {
+        $match: {
+          userId: new Types.ObjectId(userId),
+          active: true,
+        },
+      },
+      {
+        $addFields: {
+          diff: {
+            $abs: { $subtract: ['$activeDate', date] },
+          },
+        },
+      },
+      {
+        $sort: { diff: 1 },
+      },
+      {
+        $limit: 1,
+      },
+      {
+        $project: { diff: 0 },
+      },
+    ]);
+
+    if (!result || result.length === 0) {
+      throw new NotFoundException('No Training found');
+    }
+
+    return Training.mapToOverviewDto(result[0]);
   }
 }
