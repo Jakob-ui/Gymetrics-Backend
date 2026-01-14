@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Auth, AuthSchema } from './schemas/auth.schema';
 import { User, UserSchema } from 'src/user/schemas/user.schema';
 import { UserModule } from 'src/user/user.module';
+import { RefreshStrategy } from './refresh.strategy';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UserModule } from 'src/user/user.module';
       signOptions: { expiresIn: '2h' },
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, RefreshStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

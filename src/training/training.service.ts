@@ -175,4 +175,29 @@ export class TrainingService {
 
     return Training.mapToOverviewDto(result[0]);
   }
+
+  async findTrainingsofMonth(
+    userId: string,
+    year: string,
+    month: string,
+  ): Promise<TrainingOverviewResponseDto[] | null> {
+    const yearNum = Number(year);
+    const monthNum = Number(month);
+    if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+      throw new BadRequestException('Invalid year or month format');
+    }
+    const startDate = new Date(Date.UTC(yearNum, monthNum - 1, 1, 0, 0, 0));
+    const endDate = new Date(Date.UTC(yearNum, monthNum, 1, 0, 0, 0));
+
+    const trainings = await this.trainingModel.find({
+      userId: new Types.ObjectId(userId),
+      activeDate: { $gte: startDate, $lt: endDate },
+    });
+
+    if (!trainings || trainings.length === 0) {
+      throw new NotFoundException('No Trainings found in month');
+    }
+
+    return trainings.map((entity) => Training.mapToOverviewDto(entity));
+  }
 }

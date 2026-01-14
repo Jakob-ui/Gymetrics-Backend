@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -12,6 +14,10 @@ import * as bcrypt from 'bcrypt';
 import { Auth } from './schemas/auth.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthResponseDto } from './Response/auth.response.dto';
+import { jwtConstants } from './constants';
+import { RefreshRequestDto } from './Request/refresh.request.dto';
+import * as crypto from 'crypto';
+import { ValidationResponseDto } from './Response/validation.response.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +27,35 @@ export class AuthService {
     @InjectModel(Auth.name) private authModel: Model<Auth>,
   ) {}
 
+  //Brauch ich damit der Hash nicht zu lang ist vom jwt und damit übereinstimmt
+  private hashTokenForBcrypt(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
+  }
+
+  async getTokens(userId: string, username: string) {
+    const payload = { userId, username };
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: jwtConstants.secret,
+        expiresIn: '6h',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: jwtConstants.refresh_secret,
+        expiresIn: '31d',
+      }),
+    ]);
+
+    return { accessToken, refreshToken };
+  }
+
+  async updateRefreshTokenHash(userId: string, refreshToken: string) {
+    const sha256Hash = this.hashTokenForBcrypt(refreshToken);
+    const hash = await bcrypt.hash(sha256Hash, 10);
+    const request: RefreshRequestDto = { refresh_token: hash };
+    await this.userService.refreshTokenUpdate(userId, request);
+  }
+
   async signIn(email: string, pass: string): Promise<AuthResponseDto> {
     const user = await this.userService.findOne(email);
 
@@ -28,10 +63,15 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { userId: user._id, username: user.name };
-    const access_token = await this.jwtService.signAsync(payload);
+    const tokens = await this.getTokens(user._id.toString(), user.name);
+    await this.updateRefreshTokenHash(user._id.toString(), tokens.refreshToken);
 
-    return Auth.mapToDto(user._id.toString(), user.name, access_token);
+    return new AuthResponseDto({
+      userId: user._id.toString(),
+      name: user.name,
+      token: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    });
   }
 
   async register(registerDto: RegisterRequestDto): Promise<AuthResponseDto> {
@@ -55,5 +95,43 @@ export class AuthService {
     }
 
     return userResponse;
+  }
+
+  async validate(userId: string): Promise<ValidationResponseDto> {
+    const user = await this.userService.findById(userId);
+    if (!user) throw new NotFoundException('user not found');
+    return new ValidationResponseDto({
+      userId: user.id.toString(),
+      name: user.name,
+    });
+  }
+
+  async refresh(
+    userId: string,
+    refreshToken: string,
+  ): Promise<AuthResponseDto> {
+    const refresh = await this.userService.findProfileRefresh(userId);
+
+    if (!refresh || !refresh.refreshToken)
+      throw new ForbiddenException('Access Denied');
+
+    const sha256Hash = this.hashTokenForBcrypt(refreshToken);
+
+    const refreshTokenMatches = await bcrypt.compare(
+      sha256Hash,
+      refresh.refreshToken,
+    );
+    if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
+
+    const tokens = await this.getTokens(refresh.userId, refresh.name);
+
+    await this.updateRefreshTokenHash(refresh.userId, tokens.refreshToken);
+
+    return new AuthResponseDto({
+      userId: refresh.userId,
+      name: refresh.name,
+      token: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    });
   }
 }

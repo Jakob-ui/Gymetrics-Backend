@@ -5,6 +5,8 @@ import { User } from './schemas/user.schema';
 import { UserRequestDto } from './dtos/Request/updateUser.request.dto';
 import { UserProfileResponseDto } from './dtos/Response/userProfile.response.dto';
 import { UserResponseDto } from './dtos/Response/user.response.dto';
+import { RefreshRequestDto } from 'src/auth/Request/refresh.request.dto';
+import { RefreshUserResponseDto } from './dtos/Response/refreshUser.response.dto';
 
 @Injectable()
 export class UserService {
@@ -26,6 +28,18 @@ export class UserService {
     return User.mapToProfileResponseDto(user);
   }
 
+  async findProfileRefresh(id: string): Promise<RefreshUserResponseDto> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user || !user.refreshToken) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    const response = new RefreshUserResponseDto();
+    response.refreshToken = user.refreshToken;
+    response.userId = user.id;
+    response.name = user.name;
+    return response;
+  }
+
   async update(
     id: string,
     requestDto: UserRequestDto,
@@ -37,6 +51,19 @@ export class UserService {
       throw new NotFoundException(`User not found`);
     }
     return User.mapToProfileResponseDto(user);
+  }
+
+  async refreshTokenUpdate(id: string, requestDto: RefreshRequestDto) {
+    const updateData = {
+      refreshToken: requestDto.refresh_token,
+    };
+
+    const user = await this.userModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .exec();
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
   }
 
   async delete(id: string): Promise<boolean> {

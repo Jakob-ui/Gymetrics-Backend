@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -49,6 +50,17 @@ export class TrainingController {
     const userId = req.user.userId;
     const dateObj = date ? new Date(date) : new Date();
     return await this.trainingService.findNearestactive(userId, dateObj);
+  }
+
+  @Get('monthlyTrainings')
+  async findTrainingsofMonth(
+    @Request() req: appController.AuthenticatedRequest,
+    @Query('year') year?: string,
+    @Query('month') month?: string,
+  ) {
+    if (!year || !month) return new NotFoundException('No month found');
+    const userId = req.user.userId;
+    return await this.trainingService.findTrainingsofMonth(userId, year, month);
   }
 
   @Post(':id')
