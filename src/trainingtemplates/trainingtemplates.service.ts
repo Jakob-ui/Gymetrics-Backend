@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { TemplateRequestDto } from './Request/template.request.dto';
+import { TemplateRequestDto } from './dtos/Request/template.request.dto';
 import { TrainingTemplate } from './schemas/trainingtemplates.schema';
-import { TemplateResponseDto } from './Response/template.response.dto';
-import { TemplateOverviewResponseDto } from './Response/templateoverview.response.dto';
+import { TemplateResponseDto } from './dtos/Response/template.response.dto';
+import { TemplateOverviewResponseDto } from './dtos/Response/templateoverview.response.dto';
 
 @Injectable()
 export class TrainingtemplatesService {

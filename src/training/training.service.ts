@@ -5,12 +5,13 @@ import {
 } from '@nestjs/common';
 import { Training } from './schemas/training.schema';
 import { Model, Types } from 'mongoose';
-import { TrainingRequestDto } from './Request/training.request.dto';
+import { TrainingRequestDto } from './dtos/Request/training.request.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { TrainingTemplate } from 'src/trainingtemplates/schemas/trainingtemplates.schema';
-import { ExerciseRequestDto } from './Request/trainingUpdate.request.dto';
-import { TrainingResponseDto } from './Response/training.response.dto';
-import { TrainingOverviewResponseDto } from './Response/training.overview.response.dto';
+import { ExerciseRequestDto } from './dtos/Request/trainingUpdate.request.dto';
+import { TrainingResponseDto } from './dtos/Response/training.response.dto';
+import { TrainingOverviewResponseDto } from './dtos/Response/training.overview.response.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class TrainingService {
@@ -20,7 +21,10 @@ export class TrainingService {
     private trainingTemplateModel: Model<TrainingTemplate>,
   ) {}
 
-  async createTraining(userId: string, trainingInfo: TrainingRequestDto) {
+  async createTraining(
+    userId: string,
+    trainingInfo: TrainingRequestDto,
+  ): Promise<Training> {
     const currentDate = new Date();
     if (trainingInfo.activeDate <= currentDate) {
       throw new BadRequestException(
@@ -61,13 +65,14 @@ export class TrainingService {
     };
     const newTraining = new this.trainingModel(trainingData);
     await newTraining.save();
+    return newTraining;
   }
 
   async updateExercise(
     userId: string,
     trainingId: string,
     newExercise: ExerciseRequestDto,
-  ) {
+  ): Promise<Training> {
     const training = await this.trainingModel.findOne({
       _id: new Types.ObjectId(trainingId),
       userId: new Types.ObjectId(userId),
@@ -85,7 +90,7 @@ export class TrainingService {
     exercise.weightDone = newExercise.weightDone;
 
     await training.save();
-    return { success: true };
+    return training;
   }
 
   async getTraining(
@@ -143,7 +148,7 @@ export class TrainingService {
   async findNearestactive(
     userId: string,
     date: Date,
-  ): Promise<TrainingOverviewResponseDto | null> {
+  ): Promise<TrainingOverviewResponseDto> {
     const result = await this.trainingModel.aggregate([
       {
         $match: {
@@ -173,14 +178,14 @@ export class TrainingService {
       throw new NotFoundException('No Training found');
     }
 
-    return Training.mapToOverviewDto(result[0]);
+    return Training.mapToOverviewDto(result[0] as Training);
   }
 
   async findTrainingsofMonth(
     userId: string,
     year: string,
     month: string,
-  ): Promise<TrainingOverviewResponseDto[] | null> {
+  ): Promise<TrainingOverviewResponseDto[]> {
     const yearNum = Number(year);
     const monthNum = Number(month);
     if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
@@ -199,5 +204,19 @@ export class TrainingService {
     }
 
     return trainings.map((entity) => Training.mapToOverviewDto(entity));
+  }
+
+  @Cron('0 1 0 * * 1-7')
+  async handleCron() {
+    const now = new Date();
+    const models = await this.trainingModel.find();
+    if (models) {
+      for (let i = 0; i < models.length; i++) {
+        if (models[i].active && models[i].activeDate < now) {
+          models[i].active = false;
+          await models[i].save();
+        }
+      }
+    }
   }
 }

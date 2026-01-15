@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Document } from 'mongoose';
 import { TrainingTemplate } from 'src/trainingtemplates/schemas/trainingtemplates.schema';
 import { User } from 'src/user/schemas/user.schema';
-import { TrainingResponseDto } from '../Response/training.response.dto';
-import { TrainingOverviewResponseDto } from '../Response/training.overview.response.dto';
+import { TrainingResponseDto } from '../dtos/Response/training.response.dto';
+import { TrainingOverviewResponseDto } from '../dtos/Response/training.overview.response.dto';
 
 @Schema({ _id: true })
 export class Exercise {
