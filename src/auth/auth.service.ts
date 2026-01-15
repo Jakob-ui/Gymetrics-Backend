@@ -14,10 +14,10 @@ import * as bcrypt from 'bcrypt';
 import { Auth } from './schemas/auth.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthResponseDto } from './Response/auth.response.dto';
-import { jwtConstants } from './constants';
 import { RefreshRequestDto } from './Request/refresh.request.dto';
 import * as crypto from 'crypto';
 import { ValidationResponseDto } from './Response/validation.response.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +25,7 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     @InjectModel(Auth.name) private authModel: Model<Auth>,
+    private configService: ConfigService,
   ) {}
 
   //Brauch ich damit der Hash nicht zu lang ist vom jwt und damit übereinstimmt
@@ -34,14 +35,14 @@ export class AuthService {
 
   async getTokens(userId: string, username: string) {
     const payload = { userId, username };
+    const secret = this.configService.get<string>('JWT_SECRET');
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
-        secret: jwtConstants.secret,
+        secret: secret,
         expiresIn: '6h',
       }),
       this.jwtService.signAsync(payload, {
-        secret: jwtConstants.refresh_secret,
         expiresIn: '31d',
       }),
     ]);

@@ -1,0 +1,47 @@
+services:
+  backend:
+    build: .
+    container_name: gymetrics-backend
+    environment:
+      - MONGO_URI=mongodb://user:root@mongodb2:27017/gymetrics?authSource=admin
+      - JWT_SECRET=dein_jwt_secret
+      - JWT_REFRESH=dein_refresh_secret
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
+
+  mongodb:
+    image: mongo
+    container_name: mongodb2
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - /home/jakob/docker/compose/gymetrics/mongodb/newdatabase/:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+    networks:
+      - mongodb_network
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express2
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://user:root@mongodb2:27017/?authSource=admin
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: pass
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
+
+networks:
+  mongodb_network:
+    driver: bridge
