@@ -17,7 +17,8 @@ import { TrainingModule } from './training/training.module';
       envFilePath: '.env',
     }),
     MongooseModule.forRoot(
-      `mongodb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASSWORD}@localhost:27017/gymetrics?authSource=admin`,
+      process.env.MONGODB_URI ||
+        `mongodb://user:root@localhost:27017/gymetrics?authSource=admin`,
     ),
     UserModule,
     AuthModule,

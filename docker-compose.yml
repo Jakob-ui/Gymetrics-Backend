@@ -3,9 +3,9 @@ services:
     build: .
     container_name: gymetrics-backend
     environment:
-      - MONGO_URI=mongodb://user:root@mongodb2:27017/gymetrics?authSource=admin
-      - JWT_SECRET=dein_jwt_secret
-      - JWT_REFRESH=dein_refresh_secret
+      - MONGODB_URI=mongodb://user:root@mongodb:27017/gymetrics?authSource=admin
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH=${JWT_REFRESH}
     ports:
       - 3000:3000
     depends_on:
@@ -15,12 +15,12 @@ services:
 
   mongodb:
     image: mongo
-    container_name: mongodb2
+    container_name: mongodb
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_ROOT_USERNAME= ${ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD= ${ROOT_PASSWORD}
     volumes:
-      - /home/jakob/docker/compose/gymetrics/mongodb/newdatabase/:/data/db
+      - /mnt/user/appdata/Gymetrics:/data/db
     ports:
       - 27017:27017
     restart: unless-stopped
@@ -29,14 +29,14 @@ services:
 
   mongo-express:
     image: mongo-express
-    container_name: mongo-express2
+    container_name: mongo-express
     restart: always
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://user:root@mongodb2:27017/?authSource=admin
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: pass
+      ME_CONFIG_MONGODB_URL: mongodb://user:root@mongodb:27017/?authSource=admin
+      ME_CONFIG_BASICAUTH_USERNAME: ${ROOT_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ROOT_PASSWORD}
     depends_on:
       - mongodb
     networks:
