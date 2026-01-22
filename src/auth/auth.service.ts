@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
@@ -91,13 +92,19 @@ export class AuthService {
       ...registerDto,
       password: hashedPassword,
     });
-    await newUser.save();
-    const userResponse = await this.signIn(newUser.email, registerDto.password);
-    if (!userResponse) {
-      throw new BadRequestException('Login Failed');
+    try {
+      await newUser.save();
+      const userResponse = await this.signIn(
+        newUser.email,
+        registerDto.password,
+      );
+      if (!userResponse) {
+        throw new BadRequestException('Login Failed');
+      }
+      return userResponse;
+    } catch (err) {
+      throw new InternalServerErrorException(err);
     }
-
-    return userResponse;
   }
 
   async validate(userId: string): Promise<ValidationResponseDto> {
