@@ -9,6 +9,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { ConfigModule } from '@nestjs/config';
 import { TrainingtemplatesModule } from './trainingtemplates/trainingtemplates.module';
 import { TrainingModule } from './training/training.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TrainingModule } from './training/training.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRoot(
       process.env.MONGODB_URI ||
         `mongodb://user:root@localhost:27017/gymetrics?authSource=admin`,
