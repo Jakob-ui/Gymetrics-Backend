@@ -9,7 +9,7 @@ import { User } from './schemas/user.schema';
 import { UserRequestDto } from './dtos/Request/updateUser.request.dto';
 import { UserProfileResponseDto } from './dtos/Response/userProfile.response.dto';
 import { UserResponseDto } from './dtos/Response/user.response.dto';
-import { RefreshRequestDto } from 'src/auth/Request/refresh.request.dto';
+import { RefreshRequestDto } from 'src/auth/dtos/Request/refresh.request.dto';
 import { RefreshUserResponseDto } from './dtos/Response/refreshUser.response.dto';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { AuthResponseDto } from '../Response/auth.response.dto';
+import { AuthResponseDto } from '../dtos/Response/auth.response.dto';
 
 @Schema({
   collection: 'users',
