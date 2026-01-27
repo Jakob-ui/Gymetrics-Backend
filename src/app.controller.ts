@@ -11,9 +11,10 @@ export class AppController {
   @Public()
   @Get()
   @HttpCode(HttpStatus.OK)
-  ping(): { status: string; timestamp: Date } {
+  ping(): { status: string; timestamp: Date; message: string } {
     return {
       status: 'ok',
+      message: 'Gymetrics backend here',
       timestamp: new Date(),
     };
   }
