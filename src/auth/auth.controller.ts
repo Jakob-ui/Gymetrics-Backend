@@ -10,11 +10,11 @@ import {
   Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginRequestDto } from './Request/login.request.dto';
+import { LoginRequestDto } from './dtos/Request/login.request.dto';
 import { Public } from './decorators/public.decorator';
-import { RegisterRequestDto } from './Request/register.request.dto';
+import { RegisterRequestDto } from './dtos/Request/register.request.dto';
 import { RefreshAuthGuard } from './refresh/refresh.guard';
-import { ValidationResponseDto } from './Response/validation.response.dto';
+import { ValidationResponseDto } from './dtos/Response/validation.response.dto';
 
 interface AuthenticatedRequest extends Request {
   user: {

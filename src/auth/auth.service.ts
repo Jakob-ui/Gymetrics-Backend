@@ -9,15 +9,15 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
-import { RegisterRequestDto } from './Request/register.request.dto';
+import { RegisterRequestDto } from './dtos/Request/register.request.dto';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { Auth } from './schemas/auth.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { AuthResponseDto } from './Response/auth.response.dto';
-import { RefreshRequestDto } from './Request/refresh.request.dto';
+import { AuthResponseDto } from './dtos/Response/auth.response.dto';
+import { RefreshRequestDto } from './dtos/Request/refresh.request.dto';
 import * as crypto from 'crypto';
-import { ValidationResponseDto } from './Response/validation.response.dto';
+import { ValidationResponseDto } from './dtos/Response/validation.response.dto';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
