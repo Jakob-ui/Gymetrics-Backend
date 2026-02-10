@@ -3,7 +3,7 @@ matrix:
   sources:
   - '**/*.md'
   aspell:
-    lang: de
+    lang: en
   dictionary:
     wordlists:
       - .wordlist.txt
