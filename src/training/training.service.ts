@@ -242,7 +242,7 @@ export class TrainingService {
     }
   }
 
-  @Cron('0 0 0 * * 1-7', { name: 'dailyActivationReset' })
+  @Cron('0 0 0 * * *', { name: 'dailyActivationReset' })
   async handleCron() {
     try {
       const now = new Date();
