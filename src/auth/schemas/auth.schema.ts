@@ -7,9 +7,12 @@ import { AuthResponseDto } from '../dtos/Response/auth.response.dto';
   timestamps: { createdAt: '_createdAt', updatedAt: '_updatedAt' },
 })
 export class Auth extends Document {
-  @Prop({ required: true }) name: string;
-  @Prop({ unique: true, required: true }) email: string;
-  @Prop({ required: true }) password: string;
+  @Prop({ required: true })
+  name!: string;
+  @Prop({ unique: true, required: true })
+  email!: string;
+  @Prop({ required: true })
+  password!: string;
 
   static mapToDto(
     userId: string,

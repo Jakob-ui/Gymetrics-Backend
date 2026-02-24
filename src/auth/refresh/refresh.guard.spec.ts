@@ -1,7 +1,9 @@
-import { RefreshGuard } from './refresh.guard';
+/* eslint-disable @typescript-eslint/no-floating-promises */
+import { describe, it } from 'node:test';
+import { RefreshAuthGuard } from './refresh.guard';
 
-describe('RefreshGuard', () => {
+describe('RefreshAuthGuard', () => {
   it('should be defined', () => {
-    expect(new RefreshGuard()).toBeDefined();
+    expect(new RefreshAuthGuard()).toBeDefined();
   });
 });

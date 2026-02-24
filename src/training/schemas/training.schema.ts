@@ -9,22 +9,23 @@ import { TrainingOverviewResponseDto } from '../dtos/Response/training.overview.
 export class Exercise {
   _id?: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, required: false })
   exerciseId?: Types.ObjectId;
 
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop({ required: true })
-  reps: number;
+  reps!: number;
 
   @Prop({ required: false })
-  repsDone: number;
+  repsDone!: number;
 
   @Prop({ required: false })
-  weight: number;
+  weight!: number;
 
   @Prop({ required: false })
-  weightDone: number;
+  weightDone!: number;
 
   @Prop({ required: false })
   factor?: number;
@@ -38,10 +39,10 @@ export const ExerciseSchema = SchemaFactory.createForClass(Exercise);
 })
 export class Training extends Document {
   @Prop({ required: true })
-  index: number;
+  index!: number;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
-  userId: User;
+  userId!: User;
 
   @Prop({
     type: Types.ObjectId,
@@ -49,35 +50,36 @@ export class Training extends Document {
     required: true,
     index: true,
   })
-  templateId: TrainingTemplate;
+  templateId!: TrainingTemplate;
 
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop({ required: false })
   description?: string;
 
   @Prop({ required: true, default: true })
-  active: boolean;
+  active!: boolean;
 
   @Prop({ required: true })
-  activeDate: Date;
+  activeDate!: Date;
 
   @Prop({ required: false })
   icon?: string;
 
   @Prop()
-  _updatedAt: Date;
+  _updatedAt!: Date;
 
   @Prop()
-  _createdAt: Date;
+  _createdAt!: Date;
 
   @Prop({ type: [ExerciseSchema], default: [] })
-  plan: Exercise[];
+  plan!: Exercise[];
 
   static mapToDto(training: Training): TrainingResponseDto {
     return new TrainingResponseDto({
       _id: training._id.toString(),
+      // eslint-disable-next-line @typescript-eslint/no-base-to-string
       templateId: training.templateId?.toString?.(),
       title: training.title,
       description: training.description,

@@ -9,13 +9,13 @@ export class Exercise {
   _id?: Types.ObjectId;
 
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop({ required: true })
-  reps: number;
+  reps!: number;
 
   @Prop({ required: false })
-  weight: number;
+  weight!: number;
 
   @Prop({ required: false })
   factor?: number;
@@ -29,28 +29,28 @@ export const ExerciseSchema = SchemaFactory.createForClass(Exercise);
 })
 export class TrainingTemplate extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
-  userId: User;
+  userId!: User;
 
   @Prop({ required: true })
-  title: string;
+  title!: string;
 
   @Prop({ required: false })
   description?: string;
 
   @Prop({ required: true, default: false })
-  status: boolean;
+  status!: boolean;
 
   @Prop({ required: false })
-  icon: string;
+  icon!: string;
 
   @Prop()
-  _updatedAt: Date;
+  _updatedAt!: Date;
 
   @Prop()
-  _createdAt: Date;
+  _createdAt!: Date;
 
   @Prop({ type: [ExerciseSchema], default: [] })
-  plan: Exercise[];
+  plan!: Exercise[];
 
   static mapToDto(entity: TrainingTemplate): TemplateResponseDto {
     return new TemplateResponseDto({
