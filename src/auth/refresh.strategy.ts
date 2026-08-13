@@ -26,6 +26,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
 
     if (!refreshToken) throw new ForbiddenException('Refresh token malformed');
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return {
       ...payload,
       refreshToken,
