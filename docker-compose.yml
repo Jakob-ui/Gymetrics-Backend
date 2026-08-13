@@ -1,9 +1,9 @@
 services:
   backend:
     build: .
-    container_name: gymetrics-backend
+    container_name: gymetrics
     environment:
-      - MONGODB_URI=mongodb://${ROOT_USERNAME}:${ROOT_PASSWORD}@mongodb:27017/gymetrics?authSource=admin
+      - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH=${JWT_REFRESH}
     ports:
@@ -13,15 +13,19 @@ services:
     networks:
       - mongodb_network
   mongodb:
-    image: mongo
+    image: mongo:latest
     container_name: mongodb
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+      - APP_USERNAME=${APP_USERNAME}
+      - APP_PASSWORD=${APP_PASSWORD}
+      - APP_DATABASE=${APP_DATABASE}
+      - MONGOT_LOG_FILE=/dev/log
+      - RUNNER_LOG_FILE=/dev/log
     volumes:
       - mongo-data:/data/db
-    ports:
-      - 27017:27017
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
     restart: unless-stopped
     networks:
       - mongodb_network
@@ -32,7 +36,7 @@ services:
     ports:
       - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_URL: mongodb://${ROOT_USERNAME}:${ROOT_PASSWORD}@mongodb:27017/?authSource=admin
+      ME_CONFIG_MONGODB_URL: mongodb://${DATABASE_ROOT_USERNAME}:${DATABASE_ROOT_PASSWORD}@mongodb:27017/?authSource=admin
       ME_CONFIG_BASICAUTH_USERNAME: ${M_EXPRESS_USERNAME}
       ME_CONFIG_BASICAUTH_PASSWORD: ${M_EXPRESS_PASSWORD}
     depends_on:
