@@ -12,6 +12,18 @@ services:
       - mongodb
     networks:
       - mongodb_network
+  
+  python-scraper:
+    build: ./scrapeService
+    container_name: gymetrics-scraper
+    environment:
+      - SCRAPER_API_KEY=${SCRAPER_API_KEY}
+    ports:
+      - 5000:5000
+    networks:
+      - mongodb_network
+    restart: unless-stopped
+  
   mongodb:
     image: mongo:latest
     container_name: mongodb

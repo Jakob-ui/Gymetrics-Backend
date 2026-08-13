@@ -1,10 +1,13 @@
 #!/bin/bash
 set -e
 
-# Erstellt den User mit Root-Rechten
-mongosh --username "$MONGO_INITDB_ROOT_USERNAME" \
-        --password "$MONGO_INITDB_ROOT_PASSWORD" \
-        --authenticationDatabase admin <<EOF
+# Warte bis MongoDB läuft
+sleep 10
+
+# Nutze "mongo" statt "mongosh"
+mongo --username "$MONGO_INITDB_ROOT_USERNAME" \
+      --password "$MONGO_INITDB_ROOT_PASSWORD" \
+      --authenticationDatabase admin <<EOF
 use $APP_DATABASE
 db.createUser({
   user: '$APP_USERNAME',
