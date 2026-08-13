@@ -1,6 +1,6 @@
 services:
   backend:
-    build: .
+    build: ./backend
     container_name: gymetrics
     environment:
       - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
