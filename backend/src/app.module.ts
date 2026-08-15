@@ -27,7 +27,7 @@ import { ScraperModule } from './scraper/scraper.module';
     AuthModule,
     TrainingtemplatesModule,
     TrainingModule,
-    ScraperModule
+    ScraperModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,6 +1,5 @@
 import { IsString, IsArray, ValidateNested, IsObject } from 'class-validator';
 
-
 export class EquipmentResponseDto {
   @IsString()
   name?: string;
