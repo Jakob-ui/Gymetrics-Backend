@@ -1,5 +1,22 @@
 services:
-  backend:
+   mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+      - APP_USERNAME=${APP_USERNAME}
+      - APP_PASSWORD=${APP_PASSWORD}
+      - APP_DATABASE=${APP_DATABASE}
+      - MONGOT_LOG_FILE=/dev/log
+      - RUNNER_LOG_FILE=/dev/log
+    volumes:
+      - mongo-data:/data/db
+      - ./backend/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+    restart: unless-stopped
+    networks:
+      - mongodb_network
+   backend:
     build: ./backend
     container_name: gymetrics
     environment:
@@ -13,7 +30,7 @@ services:
     networks:
       - mongodb_network
   
-  python-scraper:
+   python-scraper:
     build: ./scrapeService
     container_name: gymetrics-scraper
     environment:
@@ -23,25 +40,7 @@ services:
     networks:
       - mongodb_network
     restart: unless-stopped
-  
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
-      - APP_USERNAME=${APP_USERNAME}
-      - APP_PASSWORD=${APP_PASSWORD}
-      - APP_DATABASE=${APP_DATABASE}
-      - MONGOT_LOG_FILE=/dev/log
-      - RUNNER_LOG_FILE=/dev/log
-    volumes:
-      - mongo-data:/data/db
-      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
-    restart: unless-stopped
-    networks:
-      - mongodb_network
-  mongo-express:
+   mongo-express:
     image: mongo-express
     container_name: mongo-express
     restart: always

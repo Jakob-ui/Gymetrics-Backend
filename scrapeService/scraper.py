@@ -16,7 +16,7 @@ if not SCRAPER_API_KEY:
 def require_api_key(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        api_key = request.headers.get('X-API-Key')
+        api_key = request.headers.get('apiKey')
         
         if not api_key or api_key != SCRAPER_API_KEY:
             return jsonify({'error': 'Invalid API Key'}), 401
@@ -37,7 +37,7 @@ def scrape():
 
 @app.route('/health', methods=['GET'])
 def health():
-    return jsonify({'status': 'ok'}), 200
+    return jsonify({'status': 'ok','Key': SCRAPER_API_KEY}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)

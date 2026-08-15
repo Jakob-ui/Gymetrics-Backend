@@ -16,18 +16,15 @@ class FitnessScraper:
         print(f"Gefunden: {len(countries)} Länder")
         
         for country in countries:
-            print(f"\nScrape {country}...")
             result[country] = {}
             
             cities = self.country_scraper.get_cities_for_country(country)
-            print(f"  Städte: {len(cities)}")
             
             for city in cities:
                 studios = self.studio_scraper.get_studios_for_city(country, city)
                 
                 studios_with_equipment = []
                 for studio in studios:
-                    print(f"    Geräte für {studio['name']}...")
                     
                     equipment = self.equipment_scraper.get_equipment_for_studio(studio['href'])
                     
@@ -47,4 +44,3 @@ class FitnessScraper:
 if __name__ == '__main__':
     scraper = FitnessScraper()
     data = scraper.scrape_all()
-    print(data)
