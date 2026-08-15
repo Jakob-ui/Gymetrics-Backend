@@ -15,8 +15,6 @@ export class ScraperService {
 
   async scrapeFitnessStudioPages(apiKey: string) {
     try {
-      console.log('🔵 Starting scrape...');
-      console.log('🔵 API Key:', apiKey ? '✓ Set' : '✗ Missing');
 
       const response = await firstValueFrom(
         this.httpService.post(
@@ -54,13 +52,12 @@ export class ScraperService {
         countries.push({ country: countryName, cities: cityDocs });
       }
 
-      // Alte Daten ersetzen
       await this.fitnessStudioModel.deleteMany({});
       await this.fitnessStudioModel.insertMany(countries);
 
       return { success: true, count: countries.length };
     } catch (error) {
-      console.error('❌ Scrape failed:', error);
+      console.error('Scrape failed:', error);
       throw error;
     }
   }
