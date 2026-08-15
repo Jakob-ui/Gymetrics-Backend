@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TrainingtemplatesModule } from './trainingtemplates/trainingtemplates.module';
 import { TrainingModule } from './training/training.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ScraperModule } from './scraper/scraper.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuthModule,
     TrainingtemplatesModule,
     TrainingModule,
+    ScraperModule,
   ],
   controllers: [AppController],
   providers: [

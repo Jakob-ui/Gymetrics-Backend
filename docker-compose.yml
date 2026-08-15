@@ -1,18 +1,5 @@
 services:
-  backend:
-    build: .
-    container_name: gymetrics
-    environment:
-      - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_REFRESH=${JWT_REFRESH}
-    ports:
-      - 3000:3000
-    depends_on:
-      - mongodb
-    networks:
-      - mongodb_network
-  mongodb:
+   mongodb:
     image: mongo:latest
     container_name: mongodb
     environment:
@@ -25,11 +12,35 @@ services:
       - RUNNER_LOG_FILE=/dev/log
     volumes:
       - mongo-data:/data/db
-      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+      - ./backend/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
     restart: unless-stopped
     networks:
       - mongodb_network
-  mongo-express:
+   backend:
+    build: ./backend
+    container_name: gymetrics
+    environment:
+      - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH=${JWT_REFRESH}
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+    networks:
+      - mongodb_network
+  
+   python-scraper:
+    build: ./scrapeService
+    container_name: gymetrics-scraper
+    environment:
+      - SCRAPER_API_KEY=${SCRAPER_API_KEY}
+    ports:
+      - 5000:5000
+    networks:
+      - mongodb_network
+    restart: unless-stopped
+   mongo-express:
     image: mongo-express
     container_name: mongo-express
     restart: always

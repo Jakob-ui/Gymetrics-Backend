@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Erstellt den User mit Root-Rechten
 mongosh --username "$MONGO_INITDB_ROOT_USERNAME" \
         --password "$MONGO_INITDB_ROOT_PASSWORD" \
         --authenticationDatabase admin <<EOF
