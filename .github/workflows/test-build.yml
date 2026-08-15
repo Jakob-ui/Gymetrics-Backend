@@ -20,12 +20,40 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
+        working-directory: backend
         run: npm ci
 
       - name: Run lint
+        working-directory: backend
         run: npm run lint
 
       - name: Build
+        working-directory: backend
         run: npm run build
+
+  build-test-scrapeservice:
+    name: Build and Test the scrape service
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Sources
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: scrapeService/requirements.txt
+
+      - name: Install dependencies
+        working-directory: scrapeService
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Build (compile check)
+        working-directory: scrapeService
+        run: python -m compileall -q .
