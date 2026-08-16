@@ -23,6 +23,9 @@ Or with Docker:
 docker-compose up -d --build
 ```
 
+System Architecture
+![Picture of System Architecture](./ressources/architecture_gymetrics.png)
+
 Configuration via [.env](.env). Key variables: `MONGODB_URI`, `JWT_SECRET`, `JWT_REFRESH`, `ROOT_USERNAME`, `ROOT_PASSWORD`.
 
 Swagger (API docs) available at `/api` (see [src/main.ts](src/main.ts)).
