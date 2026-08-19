@@ -29,6 +29,7 @@ services:
       - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH=${JWT_REFRESH}
+      - MODE=AI
     ports:
       - 3000:3000
     depends_on:

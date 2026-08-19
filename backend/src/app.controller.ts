@@ -18,4 +18,15 @@ export class AppController {
       timestamp: new Date(),
     };
   }
+
+  @Public()
+  @Get('status')
+  getStatus(): { status: string; timestamp: Date; message: string, aiMode: boolean } {
+    return {
+      status: 'ok',
+      message: 'Gymetrics backend here',
+      timestamp: new Date(),
+      aiMode: process.env.MODE === 'AI' || false
+    };
+  }
 }
