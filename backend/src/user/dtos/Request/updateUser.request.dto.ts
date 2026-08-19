@@ -15,4 +15,7 @@ export class UserRequestDto {
 
   @IsString()
   muscle: string;
+
+  @IsString()
+  activeStudio: string;
 }

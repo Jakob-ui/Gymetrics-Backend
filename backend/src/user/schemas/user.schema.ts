@@ -22,6 +22,8 @@ export class User extends Document {
   @Prop()
   muscle!: string;
   @Prop()
+  activeStudio!: string;
+  @Prop()
   _createdAt!: Date;
   @Prop()
   _updatedAt!: Date;
@@ -34,6 +36,7 @@ export class User extends Document {
       height: user.height,
       weight: user.weight,
       muscle: user.muscle,
+      activeStudio: user.activeStudio,
       _createdAt: user._createdAt,
       _updatedAt: user._updatedAt,
     });
