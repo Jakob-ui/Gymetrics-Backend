@@ -11,6 +11,7 @@ import { TrainingtemplatesModule } from './trainingtemplates/trainingtemplates.m
 import { TrainingModule } from './training/training.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ScraperModule } from './scraper/scraper.module';
+import { StudiosModule } from './studios/studios.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ScraperModule } from './scraper/scraper.module';
     TrainingtemplatesModule,
     TrainingModule,
     ScraperModule,
+    StudiosModule,
   ],
   controllers: [AppController],
   providers: [
