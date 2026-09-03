@@ -22,12 +22,8 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
-      - APP_USERNAME=${APP_USERNAME}
-      - APP_PASSWORD=${APP_PASSWORD}
-      - APP_DATABASE=${APP_DATABASE}
     volumes:
       - ${DATA_PATH}:/data/db
-      - ./backend/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
     restart: always
     networks:
       - mongodb_network
@@ -37,7 +33,7 @@ services:
       context: ./backend
     container_name: gymetrics-backend
     environment:
-      - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
+      - MONGODB_URI=mongodb://${DATABASE_ROOT_USERNAME}:${DATABASE_ROOT_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=admin
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH=${JWT_REFRESH}
       - LOG_LEVEL=error
@@ -79,9 +75,6 @@ DATA_PATH=/opt/gymetrics/data
 # DATABASE CONFIGURATION
 DATABASE_ROOT_USERNAME=admin
 DATABASE_ROOT_PASSWORD=change-this-secure-password
-
-APP_USERNAME=gymetrics_user
-APP_PASSWORD=change-this-secure-password
 
 APP_DATABASE=gymetrics
 

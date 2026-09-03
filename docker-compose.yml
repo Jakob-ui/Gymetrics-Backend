@@ -5,14 +5,10 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
-      - APP_USERNAME=${APP_USERNAME}
-      - APP_PASSWORD=${APP_PASSWORD}
-      - APP_DATABASE=${APP_DATABASE}
       - MONGOT_LOG_FILE=/dev/log
       - RUNNER_LOG_FILE=/dev/log
     volumes:
       - mongo-data:/data/db
-      - ./backend/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
     restart: unless-stopped
     networks:
       - mongodb_network
@@ -26,9 +22,10 @@ services:
     build: ./backend
     container_name: gymetrics
     environment:
-      - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
+      - MONGODB_URI=mongodb://${DATABASE_ROOT_USERNAME}:${DATABASE_ROOT_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=admin
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH=${JWT_REFRESH}
+      - SCRAPER_API_KEY=${SCRAPER_API_KEY}
       - MODE=AI
     ports:
       - 3000:3000
