@@ -13,8 +13,6 @@ System Architecture
 ## Docker Compose example Configuration
 
 ```yaml
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:7.0.40
@@ -22,43 +20,33 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
-      - APP_USERNAME=${APP_USERNAME}
-      - APP_PASSWORD=${APP_PASSWORD}
-      - APP_DATABASE=${APP_DATABASE}
     volumes:
       - ${DATA_PATH}:/data/db
-      - ./backend/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
-    restart: always
+    restart: unless-stopped
     networks:
       - mongodb_network
 
   backend:
-    build: 
-      context: ./backend
+    image: jakobl2/gymetrics:latest
     container_name: gymetrics-backend
     environment:
-      - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
+      - MONGODB_URI=mongodb://${DATABASE_ROOT_USERNAME}:${DATABASE_ROOT_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=admin
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH=${JWT_REFRESH}
-      - LOG_LEVEL=error
+      - SCRAPER_API_KEY=${SCRAPER_API_KEY}
     ports:
-      - 3000:3000
-    expose:
-      - 3000
+      - 3245:3000
     depends_on:
       - mongodb
     networks:
       - mongodb_network
-    restart: always
+    restart: unless-stopped
 
   python-scraper:
-    build: 
-      context: ./scrapeService
+    image: jakobl2/gymetrics-scraper:latest
     container_name: gymetrics-scraper
     environment:
       - SCRAPER_API_KEY=${SCRAPER_API_KEY}
-    expose:
-      - 5000
     networks:
       - mongodb_network
     restart: always
@@ -79,9 +67,6 @@ DATA_PATH=/opt/gymetrics/data
 # DATABASE CONFIGURATION
 DATABASE_ROOT_USERNAME=admin
 DATABASE_ROOT_PASSWORD=change-this-secure-password
-
-APP_USERNAME=gymetrics_user
-APP_PASSWORD=change-this-secure-password
 
 APP_DATABASE=gymetrics
 

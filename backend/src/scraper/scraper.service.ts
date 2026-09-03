@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FitnessStudio } from './schemas/scrapedData.schema';
 import { Model } from 'mongoose';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
+import { Cron } from '@nestjs/schedule';
 
 interface ScrapedStudio {
   name: string;
@@ -16,13 +17,19 @@ interface ScrapedResponse {
 }
 
 @Injectable()
-export class ScraperService {
+export class ScraperService implements OnApplicationBootstrap {
   constructor(
     @InjectModel(FitnessStudio.name)
     private fitnessStudioModel: Model<FitnessStudio>,
     private readonly httpService: HttpService,
   ) {}
 
+  onApplicationBootstrap() {
+    const apiKey = process.env.SCRAPER_API_KEY || '';
+    void this.scrapeFitnessStudioPages(apiKey);
+  }
+
+  @Cron('0 0 0 1 * *')
   async scrapeFitnessStudioPages(apiKey: string) {
     try {
       const response = await firstValueFrom(
