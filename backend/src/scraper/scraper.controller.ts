@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 import { Public } from 'src/auth/decorators/public.decorator';
 
@@ -7,7 +7,7 @@ export class ScraperController {
   constructor(private readonly scraperService: ScraperService) {}
 
   @Public()
-  @Post('sync')
+  @Get('sync')
   async syncFitnessData() {
     const apiKey = process.env.SCRAPER_API_KEY || '';
     const result = await this.scraperService.scrapeFitnessStudioPages(apiKey);

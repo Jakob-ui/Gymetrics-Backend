@@ -22,6 +22,10 @@ export class UserProfileResponseDto {
   @IsString()
   muscle: string;
 
+  @IsOptional()
+  @IsString()
+  activeStudio: string;
+
   _createdAt: Date;
   _updatedAt: Date;
 

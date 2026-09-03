@@ -1,6 +1,6 @@
 services:
    mongodb:
-    image: mongo:latest
+    image: mongo:7.0.40
     container_name: mongodb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${DATABASE_ROOT_USERNAME}
@@ -16,6 +16,12 @@ services:
     restart: unless-stopped
     networks:
       - mongodb_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
    backend:
     build: ./backend
     container_name: gymetrics
@@ -23,12 +29,14 @@ services:
       - MONGODB_URI=mongodb://${APP_USERNAME}:${APP_PASSWORD}@mongodb:27017/${APP_DATABASE}?authSource=${APP_DATABASE}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_REFRESH=${JWT_REFRESH}
+      - MODE=AI
     ports:
       - 3000:3000
     depends_on:
       - mongodb
     networks:
       - mongodb_network
+    restart: on-failure
   
    python-scraper:
     build: ./scrapeService
@@ -40,6 +48,7 @@ services:
     networks:
       - mongodb_network
     restart: unless-stopped
+
    mongo-express:
     image: mongo-express
     container_name: mongo-express
@@ -54,6 +63,7 @@ services:
       - mongodb
     networks:
       - mongodb_network
+    
 networks:
   mongodb_network:
     driver: bridge
