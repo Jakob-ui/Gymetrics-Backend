@@ -6,7 +6,6 @@ import { TrainingTemplate } from './schemas/trainingtemplates.schema';
 import { TemplateResponseDto } from './dtos/Response/template.response.dto';
 import { TemplateOverviewResponseDto } from './dtos/Response/templateoverview.response.dto';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,

@@ -150,10 +150,6 @@ export class TrainingService {
     const safePage = Math.max(1, page);
     const safeLimit = Math.min(Math.max(1, limit), 100);
     const skip = (safePage - 1) * safeLimit;
-
-    // Real field names on the Training document - _createdAt/_updatedAt (see the schema's
-    // timestamps option), not createdAt/updatedAt. Sorting by the wrong name silently does
-    // nothing instead of erroring, which is exactly the bug we just found on templates.
     const allowedSortFields = {
       createdAt: '_createdAt',
       updatedAt: '_updatedAt',
@@ -164,21 +160,28 @@ export class TrainingService {
       allowedSortFields[sortBy as keyof typeof allowedSortFields] ??
       '_createdAt';
 
-    const filter: any = {
-      userId: new Types.ObjectId(userId),
+    type TrainingListFilter = {
+      userId: Types.ObjectId;
+      active?: boolean;
+      $or?: Array<
+        | { title: { $regex: string; $options: 'i' } }
+        | { description: { $regex: string; $options: 'i' } }
+      >;
     };
 
-    if (active !== undefined) {
-      filter.active = active;
-    }
-
-    if (search && search.trim()) {
-      const q = search.trim();
-      filter.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-      ];
-    }
+    const q = search?.trim();
+    const filter: TrainingListFilter = {
+      userId: new Types.ObjectId(userId),
+      ...(active !== undefined ? { active } : {}),
+      ...(q
+        ? {
+            $or: [
+              { title: { $regex: q, $options: 'i' } },
+              { description: { $regex: q, $options: 'i' } },
+            ],
+          }
+        : {}),
+    };
 
     try {
       const trainingOverview = await this.trainingModel
@@ -274,7 +277,7 @@ export class TrainingService {
   async handleCron() {
     try {
       const now = new Date();
-      const models = await this.trainingModel.find();
+      const models: Training[] = await this.trainingModel.find().exec();
       if (models) {
         for (let i = 0; i < models.length; i++) {
           if (models[i].active && models[i].activeDate < now) {

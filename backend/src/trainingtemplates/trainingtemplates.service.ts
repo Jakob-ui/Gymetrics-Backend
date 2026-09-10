@@ -111,18 +111,26 @@ export class TrainingtemplatesService {
       allowedSortFields[sortBy as keyof typeof allowedSortFields] ??
       'createdAt';
 
-    const filter: any = {
-      userId: new Types.ObjectId(userId),
+    type TemplateListFilter = {
+      userId: Types.ObjectId;
+      $or?: Array<
+        | { title: { $regex: string; $options: 'i' } }
+        | { description: { $regex: string; $options: 'i' } }
+      >;
     };
 
-    if (search && search.trim()) {
-      const q = search.trim();
-
-      filter.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-      ];
-    }
+    const q = search?.trim();
+    const filter: TemplateListFilter = {
+      userId: new Types.ObjectId(userId),
+      ...(q
+        ? {
+            $or: [
+              { title: { $regex: q, $options: 'i' } },
+              { description: { $regex: q, $options: 'i' } },
+            ],
+          }
+        : {}),
+    };
 
     try {
       const templates = await this.templateModel
