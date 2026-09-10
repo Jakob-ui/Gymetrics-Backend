@@ -90,17 +90,54 @@ export class TrainingtemplatesService {
     }
   }
 
-  async findAllForUser(
+  async findTemplatesForUser(
     userId: string,
     page: number,
     limit: number,
+    asc: boolean,
+    sortBy: string,
+    search?: string,
   ): Promise<TemplateOverviewResponseDto[]> {
-    const skip = (page - 1) * limit;
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+    const skip = (safePage - 1) * safeLimit;
+    const allowedSortFields = {
+      createdAt: '_createdAt',
+      updatedAt: '_updatedAt',
+      name: 'name',
+    } as const;
+
+    const sortField =
+      allowedSortFields[sortBy as keyof typeof allowedSortFields] ??
+      'createdAt';
+
+    type TemplateListFilter = {
+      userId: Types.ObjectId;
+      $or?: Array<
+        | { title: { $regex: string; $options: 'i' } }
+        | { description: { $regex: string; $options: 'i' } }
+      >;
+    };
+
+    const q = search?.trim();
+    const filter: TemplateListFilter = {
+      userId: new Types.ObjectId(userId),
+      ...(q
+        ? {
+            $or: [
+              { title: { $regex: q, $options: 'i' } },
+              { description: { $regex: q, $options: 'i' } },
+            ],
+          }
+        : {}),
+    };
+
     try {
       const templates = await this.templateModel
-        .find({ userId: new Types.ObjectId(userId) })
+        .find(filter)
+        .sort({ [sortField]: asc ? 1 : -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(safeLimit)
         .exec();
       if (!templates || templates.length === 0) {
         throw new NotFoundException('No Templates found');

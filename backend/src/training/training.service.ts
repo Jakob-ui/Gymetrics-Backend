@@ -140,26 +140,57 @@ export class TrainingService {
 
   async findAllForUser(
     userId: string,
-    active: boolean,
     page: number,
     limit: number,
+    asc: boolean,
+    sortBy: string,
+    search?: string,
+    active?: boolean,
   ): Promise<TrainingOverviewResponseDto[]> {
-    const skip = (page - 1) * limit;
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+    const skip = (safePage - 1) * safeLimit;
+    const allowedSortFields = {
+      createdAt: '_createdAt',
+      updatedAt: '_updatedAt',
+      activeDate: 'activeDate',
+    } as const;
+
+    const sortField =
+      allowedSortFields[sortBy as keyof typeof allowedSortFields] ??
+      '_createdAt';
+
+    type TrainingListFilter = {
+      userId: Types.ObjectId;
+      active?: boolean;
+      $or?: Array<
+        | { title: { $regex: string; $options: 'i' } }
+        | { description: { $regex: string; $options: 'i' } }
+      >;
+    };
+
+    const q = search?.trim();
+    const filter: TrainingListFilter = {
+      userId: new Types.ObjectId(userId),
+      ...(active !== undefined ? { active } : {}),
+      ...(q
+        ? {
+            $or: [
+              { title: { $regex: q, $options: 'i' } },
+              { description: { $regex: q, $options: 'i' } },
+            ],
+          }
+        : {}),
+    };
+
     try {
-      let trainingOverview: Training[];
-      if (active === undefined) {
-        trainingOverview = await this.trainingModel
-          .find({ userId: new Types.ObjectId(userId) })
-          .skip(skip)
-          .limit(limit)
-          .exec();
-      } else {
-        trainingOverview = await this.trainingModel
-          .find({ userId: new Types.ObjectId(userId), active: active })
-          .skip(skip)
-          .limit(limit)
-          .exec();
-      }
+      const trainingOverview = await this.trainingModel
+        .find(filter)
+        .sort({ [sortField]: asc ? 1 : -1 })
+        .skip(skip)
+        .limit(safeLimit)
+        .exec();
+
       if (!trainingOverview || trainingOverview.length === 0) {
         throw new NotFoundException('No Trainings found');
       }
@@ -246,7 +277,7 @@ export class TrainingService {
   async handleCron() {
     try {
       const now = new Date();
-      const models = await this.trainingModel.find();
+      const models: Training[] = await this.trainingModel.find().exec();
       if (models) {
         for (let i = 0; i < models.length; i++) {
           if (models[i].active && models[i].activeDate < now) {

@@ -6,7 +6,6 @@ import { TrainingTemplate } from './schemas/trainingtemplates.schema';
 import { TemplateResponseDto } from './dtos/Response/template.response.dto';
 import { TemplateOverviewResponseDto } from './dtos/Response/templateoverview.response.dto';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -18,6 +17,7 @@ import {
   Query,
   Request,
 } from '@nestjs/common';
+import { TemplateQueryDto } from './dtos/Query/template.query.dto';
 @Controller('templates')
 export class TrainingtemplatesController {
   constructor(private readonly templateService: TrainingtemplatesService) {}
@@ -80,15 +80,17 @@ export class TrainingtemplatesController {
     type: [TemplateOverviewResponseDto],
     description: 'List of training templates',
   })
-  async findAllForUser(
+  async findTemplatesForUser(
     @Request() req: appController.AuthenticatedRequest,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query() query: TemplateQueryDto,
   ): Promise<TemplateOverviewResponseDto[]> {
-    if (page < 1 || limit < 1 || limit > 200) {
-      throw new BadRequestException('Invalid pagination parameters');
-    }
-    const userId = req.user.userId;
-    return this.templateService.findAllForUser(userId, page, limit);
+    return this.templateService.findTemplatesForUser(
+      req.user.userId,
+      query.page,
+      query.limit,
+      query.asc,
+      query.sortBy,
+      query.search,
+    );
   }
 }
