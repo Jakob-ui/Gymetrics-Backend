@@ -16,6 +16,7 @@ import { ExerciseRequestDto } from './dtos/Request/trainingUpdate.request.dto';
 import { TrainingResponseDto } from './dtos/Response/training.response.dto';
 import { Training } from './schemas/training.schema';
 import { TrainingOverviewResponseDto } from './dtos/Response/training.overview.response.dto';
+import { TrainingQueryDto } from './dtos/Query/training.query.dto';
 
 @Controller('training')
 export class TrainingController {
@@ -43,16 +44,17 @@ export class TrainingController {
   })
   async findAllForUser(
     @Request() req: appController.AuthenticatedRequest,
-    @Query('active') active: boolean,
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
+    @Query() query: TrainingQueryDto,
   ): Promise<TrainingOverviewResponseDto[]> {
     const userId = req.user.userId;
     return await this.trainingService.findAllForUser(
       userId,
-      active,
-      page,
-      limit,
+      query.page,
+      query.limit,
+      query.asc,
+      query.sortBy,
+      query.search,
+      query.active,
     );
   }
 

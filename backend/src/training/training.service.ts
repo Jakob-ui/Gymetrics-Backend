@@ -140,26 +140,54 @@ export class TrainingService {
 
   async findAllForUser(
     userId: string,
-    active: boolean,
     page: number,
     limit: number,
+    asc: boolean,
+    sortBy: string,
+    search?: string,
+    active?: boolean,
   ): Promise<TrainingOverviewResponseDto[]> {
-    const skip = (page - 1) * limit;
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+    const skip = (safePage - 1) * safeLimit;
+
+    // Real field names on the Training document - _createdAt/_updatedAt (see the schema's
+    // timestamps option), not createdAt/updatedAt. Sorting by the wrong name silently does
+    // nothing instead of erroring, which is exactly the bug we just found on templates.
+    const allowedSortFields = {
+      createdAt: '_createdAt',
+      updatedAt: '_updatedAt',
+      activeDate: 'activeDate',
+    } as const;
+
+    const sortField =
+      allowedSortFields[sortBy as keyof typeof allowedSortFields] ??
+      '_createdAt';
+
+    const filter: any = {
+      userId: new Types.ObjectId(userId),
+    };
+
+    if (active !== undefined) {
+      filter.active = active;
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim();
+      filter.$or = [
+        { title: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } },
+      ];
+    }
+
     try {
-      let trainingOverview: Training[];
-      if (active === undefined) {
-        trainingOverview = await this.trainingModel
-          .find({ userId: new Types.ObjectId(userId) })
-          .skip(skip)
-          .limit(limit)
-          .exec();
-      } else {
-        trainingOverview = await this.trainingModel
-          .find({ userId: new Types.ObjectId(userId), active: active })
-          .skip(skip)
-          .limit(limit)
-          .exec();
-      }
+      const trainingOverview = await this.trainingModel
+        .find(filter)
+        .sort({ [sortField]: asc ? 1 : -1 })
+        .skip(skip)
+        .limit(safeLimit)
+        .exec();
+
       if (!trainingOverview || trainingOverview.length === 0) {
         throw new NotFoundException('No Trainings found');
       }

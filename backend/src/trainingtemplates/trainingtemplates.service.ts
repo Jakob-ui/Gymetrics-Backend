@@ -102,8 +102,8 @@ export class TrainingtemplatesService {
     const safeLimit = Math.min(Math.max(1, limit), 100);
     const skip = (safePage - 1) * safeLimit;
     const allowedSortFields = {
-      createdAt: 'createdAt',
-      updatedAt: 'updatedAt',
+      createdAt: '_createdAt',
+      updatedAt: '_updatedAt',
       name: 'name',
     } as const;
 
@@ -119,7 +119,7 @@ export class TrainingtemplatesService {
       const q = search.trim();
 
       filter.$or = [
-        { name: { $regex: q, $options: 'i' } },
+        { title: { $regex: q, $options: 'i' } },
         { description: { $regex: q, $options: 'i' } },
       ];
     }

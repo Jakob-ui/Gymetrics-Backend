@@ -85,7 +85,7 @@ export class TrainingtemplatesController {
     @Request() req: appController.AuthenticatedRequest,
     @Query() query: TemplateQueryDto,
   ): Promise<TemplateOverviewResponseDto[]> {
-    return this.trainingtemplatesService.findTemplatesForUser(
+    return this.templateService.findTemplatesForUser(
       req.user.userId,
       query.page,
       query.limit,
