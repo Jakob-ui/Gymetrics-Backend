@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -124,5 +126,19 @@ export class TrainingController {
   ): Promise<TrainingResponseDto[]> {
     const userId = req.user.userId;
     return await this.trainingService.getTraining(userId, trainingId);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Get details of a specific training' })
+  @ApiOkResponse({
+    type: [TrainingResponseDto],
+    description: 'Training details',
+  })
+  async deleteTraining(
+    @Request() req: appController.AuthenticatedRequest,
+    @Param('id') trainingId: string,
+  ): Promise<HttpStatus> {
+    const userId = req.user.userId;
+    return await this.trainingService.deleteTraining(userId, trainingId);
   }
 }

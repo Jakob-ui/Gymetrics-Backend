@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { Training } from './schemas/training.schema';
 import { Model, Types } from 'mongoose';
@@ -288,6 +290,19 @@ export class TrainingService {
       }
     } catch (err) {
       throw new InternalServerErrorException(err);
+    }
+  }
+
+  async deleteTraining(userId, trainingId) {
+    try {
+      const result = await this.trainingModel.deleteOne({ userId, trainingId });
+      if (result.deletedCount = 1) {
+        return HttpStatus.NO_CONTENT
+      }
+      else return HttpStatus.NOT_FOUND;
+    } catch (err) {
+      if (err instanceof NotFoundException) throw err;
+      return HttpStatus.BAD_GATEWAY;
     }
   }
 }
