@@ -1,6 +1,7 @@
 export class ExerciseResponseDto {
   title: string;
   reps: number;
+  sets?: number;
   repsDone?: number;
   weight?: number;
   weightDone?: number;

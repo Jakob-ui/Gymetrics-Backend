@@ -16,6 +16,10 @@ export class ExerciseDto {
 
   @IsNumber()
   @IsNotEmpty()
+  sets: number;
+
+  @IsNumber()
+  @IsNotEmpty()
   reps: number;
 
   @IsNumber()

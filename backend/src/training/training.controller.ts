@@ -1,10 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
+  Put,
   Query,
   Request,
 } from '@nestjs/common';
@@ -76,14 +79,14 @@ export class TrainingController {
   @Get('monthlyTrainings')
   @ApiOperation({ summary: 'Get trainings of a specific month for the user' })
   @ApiOkResponse({
-    type: [TrainingOverviewResponseDto],
+    type: [TrainingResponseDto],
     description: 'Monthly trainings for the user',
   })
   async findTrainingsofMonth(
     @Request() req: appController.AuthenticatedRequest,
     @Query('year') year?: string,
     @Query('month') month?: string,
-  ): Promise<TrainingOverviewResponseDto[]> {
+  ): Promise<TrainingResponseDto[]> {
     if (!year || !month) {
       throw new NotFoundException(
         'Year and month query parameters are required',
@@ -91,6 +94,20 @@ export class TrainingController {
     }
     const userId = req.user.userId;
     return await this.trainingService.findTrainingsofMonth(userId, year, month);
+  }
+
+  @Put('completeTraining')
+  @ApiOperation({ summary: 'Set the boolean for an active Training to false' })
+  @ApiOkResponse({
+    type: Boolean,
+    description: 'Monthly trainings for the user',
+  })
+  async completeTraining(
+    @Request() req: appController.AuthenticatedRequest,
+    @Request() trainingId: string,
+  ): Promise<boolean> {
+    const userId = req.user.userId;
+    return await this.trainingService.completeTraining(userId, trainingId);
   }
 
   @Post(':id')
@@ -124,5 +141,19 @@ export class TrainingController {
   ): Promise<TrainingResponseDto[]> {
     const userId = req.user.userId;
     return await this.trainingService.getTraining(userId, trainingId);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Get details of a specific training' })
+  @ApiOkResponse({
+    type: [TrainingResponseDto],
+    description: 'Training details',
+  })
+  async deleteTraining(
+    @Request() req: appController.AuthenticatedRequest,
+    @Param('id') trainingId: string,
+  ): Promise<HttpStatus> {
+    const userId = req.user.userId;
+    return await this.trainingService.deleteTraining(userId, trainingId);
   }
 }

@@ -15,6 +15,9 @@ export class Exercise {
   reps!: number;
 
   @Prop({ required: false })
+  sets!: number;
+
+  @Prop({ required: false })
   weight!: number;
 
   @Prop({ required: false })
