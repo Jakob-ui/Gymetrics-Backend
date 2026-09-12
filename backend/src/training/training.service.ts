@@ -194,7 +194,7 @@ export class TrainingService {
         .exec();
 
       if (!trainingOverview || trainingOverview.length === 0) {
-        throw new NotFoundException('No Trainings found');
+        return [];
       }
       return trainingOverview.map((entity) =>
         Training.mapToOverviewDto(entity),
