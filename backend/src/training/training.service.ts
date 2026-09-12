@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
-  HttpCode,
   HttpStatus,
 } from '@nestjs/common';
 import { Training } from './schemas/training.schema';
@@ -108,10 +107,7 @@ export class TrainingService {
     }
   }
 
-  async completeTraining(
-    userId: string,
-    trainingId: string,
-  ): Promise<Boolean> {
+  async completeTraining(userId: string, trainingId: string): Promise<boolean> {
     try {
       const training = await this.trainingModel.findOne({
         _id: new Types.ObjectId(trainingId),
@@ -319,7 +315,7 @@ export class TrainingService {
   async deleteTraining(userId, trainingId) {
     try {
       const result = await this.trainingModel.deleteOne({ userId, trainingId });
-      if ((result.deletedCount = 1)) {
+      if (result.deletedCount === 1) {
         return HttpStatus.NO_CONTENT;
       } else return HttpStatus.NOT_FOUND;
     } catch (err) {

@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   Request,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
@@ -106,7 +105,7 @@ export class TrainingController {
   async completeTraining(
     @Request() req: appController.AuthenticatedRequest,
     @Request() trainingId: string,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     const userId = req.user.userId;
     return await this.trainingService.completeTraining(userId, trainingId);
   }
