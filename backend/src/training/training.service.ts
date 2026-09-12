@@ -108,6 +108,28 @@ export class TrainingService {
     }
   }
 
+  async completeTraining(
+    userId: string,
+    trainingId: string,
+  ): Promise<Boolean> {
+    try {
+      const training = await this.trainingModel.findOne({
+        _id: new Types.ObjectId(trainingId),
+        userId: new Types.ObjectId(userId),
+      });
+      if (!training) {
+        throw new NotFoundException('Training not found');
+      }
+      training.active = false;
+
+      await training.save();
+      return true;
+    } catch (err) {
+      if (err instanceof NotFoundException) throw err;
+      throw new InternalServerErrorException(err);
+    }
+  }
+
   async getTraining(
     userId: string,
     trainingId: string,
@@ -251,7 +273,7 @@ export class TrainingService {
     userId: string,
     year: string,
     month: string,
-  ): Promise<TrainingOverviewResponseDto[]> {
+  ): Promise<TrainingResponseDto[]> {
     const yearNum = Number(year);
     const monthNum = Number(month);
     if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
@@ -266,10 +288,10 @@ export class TrainingService {
       });
 
       if (!trainings || trainings.length === 0) {
-        throw new NotFoundException('No Trainings found in month');
+        return [];
       }
 
-      return trainings.map((entity) => Training.mapToOverviewDto(entity));
+      return trainings.map((entity) => Training.mapToDto(entity));
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
       throw new InternalServerErrorException(err);
@@ -297,10 +319,9 @@ export class TrainingService {
   async deleteTraining(userId, trainingId) {
     try {
       const result = await this.trainingModel.deleteOne({ userId, trainingId });
-      if (result.deletedCount = 1) {
-        return HttpStatus.NO_CONTENT
-      }
-      else return HttpStatus.NOT_FOUND;
+      if ((result.deletedCount = 1)) {
+        return HttpStatus.NO_CONTENT;
+      } else return HttpStatus.NOT_FOUND;
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
       return HttpStatus.BAD_GATEWAY;

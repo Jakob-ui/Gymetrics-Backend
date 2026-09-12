@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:3000';
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:3000';
 
 export interface EquipmentResponse {
 	name: string;
@@ -40,7 +40,6 @@ export async function getMonthlyTrainings(auth: string | null): Promise<Training
 	const url = new URL('/training/monthlyTrainings', BACKEND_URL);
 	url.searchParams.set('year', String(now.getFullYear()));
 	url.searchParams.set('month', String(now.getMonth() + 1));
-	url.searchParams.set('withPlan', 'true');
 
 	let res: Response;
 	try {

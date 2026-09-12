@@ -61,6 +61,19 @@ services:
     networks:
       - mongodb_network
     
+   mcp-erver:
+    build: ./mcpServer
+    container_name: mcp-server
+    restart: always
+    ports:
+      - 3001:3001
+    environment:
+      - BACKEND_URL=http://backend:3000
+    depends_on:
+      - backend
+    networks:
+      - mongodb_network
+    
 networks:
   mongodb_network:
     driver: bridge
