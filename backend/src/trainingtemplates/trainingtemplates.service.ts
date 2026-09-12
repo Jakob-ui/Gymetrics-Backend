@@ -140,7 +140,7 @@ export class TrainingtemplatesService {
         .limit(safeLimit)
         .exec();
       if (!templates || templates.length === 0) {
-        throw new NotFoundException('No Templates found');
+        return [];
       }
       return templates.map((entity) =>
         TrainingTemplate.mapToOverviewDto(entity),
