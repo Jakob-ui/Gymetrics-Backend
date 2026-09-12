@@ -3,6 +3,8 @@ import { Type } from 'class-transformer';
 export class ExerciseResponseDto {
   title: string;
 
+  sets: number;
+
   reps: number;
 
   weight: number;

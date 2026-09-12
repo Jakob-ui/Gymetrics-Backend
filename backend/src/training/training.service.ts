@@ -55,6 +55,7 @@ export class TrainingService {
       const copiedPlan = plan.map((exercise) => ({
         _id: exercise._id,
         title: exercise.title,
+        sets: exercise.sets,
         reps: exercise.reps,
         weight: exercise.weight,
         factor: exercise.factor,
