@@ -21,6 +21,10 @@ export class TemplateResponseDto {
 
   status: boolean;
 
+  isAiGenerated: boolean;
+
+  generationStatus: 'ready' | 'generating' | 'failed';
+
   icon: string;
 
   created_date: Date;

@@ -43,6 +43,16 @@ export class TrainingTemplate extends Document {
   @Prop({ required: true, default: false })
   status!: boolean;
 
+  @Prop({ required: true, default: false })
+  isAiGenerated!: boolean;
+
+  @Prop({
+    required: true,
+    default: 'ready',
+    enum: ['ready', 'generating', 'failed'],
+  })
+  generationStatus!: 'ready' | 'generating' | 'failed';
+
   @Prop({ required: false })
   icon!: string;
 
@@ -61,6 +71,8 @@ export class TrainingTemplate extends Document {
       title: entity.title,
       description: entity.description,
       status: entity.status,
+      isAiGenerated: entity.isAiGenerated,
+      generationStatus: entity.generationStatus,
       icon: entity.icon,
       created_date: entity._createdAt,
       updated_date: entity._updatedAt,
@@ -76,6 +88,8 @@ export class TrainingTemplate extends Document {
       title: entity.title,
       description: entity.description,
       status: entity.status,
+      isAiGenerated: entity.isAiGenerated,
+      generationStatus: entity.generationStatus,
       icon: entity.icon,
       created_date: entity._createdAt,
       updated_date: entity._updatedAt,

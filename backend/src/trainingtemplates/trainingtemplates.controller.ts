@@ -18,6 +18,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { TemplateQueryDto } from './dtos/Query/template.query.dto';
+import { GenerateTemplateRequestDto } from './dtos/Request/generateTemplate.request.dto';
 @Controller('templates')
 export class TrainingtemplatesController {
   constructor(private readonly templateService: TrainingtemplatesService) {}
@@ -92,5 +93,23 @@ export class TrainingtemplatesController {
       query.sortBy,
       query.search,
     );
+  }
+
+  @Post('generate')
+  @HttpCode(202)
+  @ApiOperation({
+    summary:
+      'Kick off AI template generation - returns a placeholder immediately',
+  })
+  @ApiOkResponse({
+    type: TemplateResponseDto,
+    description: 'Placeholder template, still generating',
+  })
+  async generateTemplate(
+    @Request() req: appController.AuthenticatedRequest,
+    @Body() reqDto: GenerateTemplateRequestDto,
+  ): Promise<TemplateResponseDto> {
+    const userId = req.user.userId;
+    return this.templateService.startAiGeneration(userId, reqDto);
   }
 }

@@ -15,5 +15,6 @@ import { MongooseModule } from '@nestjs/mongoose';
       { name: FitnessStudio.name, schema: FitnessStudioSchema },
     ]),
   ],
+  exports: [StudiosService],
 })
 export class StudiosModule {}
