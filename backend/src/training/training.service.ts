@@ -314,10 +314,10 @@ export class TrainingService {
 
   async deleteTraining(userId, trainingId) {
     try {
-      const result = await this.trainingModel.deleteOne({ userId, trainingId });
+      const result = await this.trainingModel.deleteOne({ userId, _id: trainingId });
       if (result.deletedCount === 1) {
         return HttpStatus.NO_CONTENT;
-      } else return HttpStatus.NOT_FOUND;
+      } throw new NotFoundException('Not Found');
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
       return HttpStatus.BAD_GATEWAY;

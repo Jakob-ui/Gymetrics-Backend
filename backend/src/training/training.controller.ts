@@ -96,7 +96,7 @@ export class TrainingController {
     return await this.trainingService.findTrainingsofMonth(userId, year, month);
   }
 
-  @Put('completeTraining')
+  @Put(':id')
   @ApiOperation({ summary: 'Set the boolean for an active Training to false' })
   @ApiOkResponse({
     type: Boolean,
@@ -104,7 +104,7 @@ export class TrainingController {
   })
   async completeTraining(
     @Request() req: appController.AuthenticatedRequest,
-    @Request() trainingId: string,
+    @Param('id') trainingId: string,
   ): Promise<boolean> {
     const userId = req.user.userId;
     return await this.trainingService.completeTraining(userId, trainingId);
