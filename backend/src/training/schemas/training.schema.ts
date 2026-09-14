@@ -94,6 +94,7 @@ export class Training extends Document {
       plan: training.plan.map((ex) => ({
         exerciseId: ex._id?.toString?.(),
         title: ex.title,
+        sets: ex.sets,
         reps: ex.reps,
         repsDone: ex.repsDone,
         weight: ex.weight,
