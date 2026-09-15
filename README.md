@@ -76,7 +76,45 @@ JWT_REFRESH=your-random-refresh-token-key
 
 # SCRAPER
 SCRAPER_API_KEY=your-random-scraper-key
+
+# AI / OLLAMA
+OLLAMA_URL=http://your-ollama-host:11434
+OLLAMA_MODEL=your-tool-capable-model
+
 ```
+
+## AI Template Generation (using Ollama)
+
+`OLLAMA_MODEL` **MUST** point to a model that supports **tool/function calling**, since
+the AI agent (`trainingtemplates.service.ts` → `generateWithAi`) always sends a
+`tools` array (`getRecentTrainings`, `getEquipment`) so the model can fetch training
+history and studio equipment itself before generating a plan.
+
+Not every Ollama model supports this. Check a model's capabilities via:
+
+```bash
+curl http://<OLLAMA_URL>/api/tags
+```
+
+Look for `"tools"` in the `capabilities` array. Models without it (e.g. `gemma3`)
+fail immediately with a `400` on `/api/chat`:
+
+```
+{"error":"registry.ollama.ai/library/gemma3:latest does not support tools"}
+```
+
+### Model compatibility
+
+Most popular models per category, kept to a manageable size (≤8B) for self-hosting.
+Checked against the `tools` capability on [ollama.com/library](https://ollama.com)
+(as of 2026-09) — this can change with model updates, so check `/api/tags` yourself
+if in doubt.
+
+| tested | may work | definitely don't work |
+|---|---|---|
+| `llama3.1:8b` | `qwen2.5:0.5b` | `gemma3` |
+| `ministral-3:3b` | `deepseek-r1:7b`  | `phi4` |
+| `qwen2.5:7b` | `granite3.1-dense:2b` | `llama2` |
 
 ## API Documentation
 
