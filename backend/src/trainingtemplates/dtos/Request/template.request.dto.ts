@@ -6,6 +6,7 @@ import {
   IsNumber,
   IsArray,
   ValidateNested,
+  ArrayMinSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -51,5 +52,6 @@ export class TemplateRequestDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ExerciseDto)
+  @ArrayMinSize(1)
   plan: ExerciseDto[];
 }

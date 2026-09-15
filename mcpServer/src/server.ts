@@ -5,7 +5,7 @@ import { getEquipment, getMonthlyTrainings } from './backend-client.js';
 export function createServer(auth: string | null) {
 	const server = new McpServer({
 		name: 'gymetrics-mcp',
-		version: '0.0.0',
+		version: '1.0.0',
 	});
 
 	server.registerTool(

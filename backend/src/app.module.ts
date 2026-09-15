@@ -12,6 +12,8 @@ import { TrainingModule } from './training/training.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ScraperModule } from './scraper/scraper.module';
 import { StudiosModule } from './studios/studios.module';
+import { AgentToolsModule } from './agent-tools/agent-tools.module';
+import { OllamaModule } from './ollama/ollama.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { StudiosModule } from './studios/studios.module';
     TrainingModule,
     ScraperModule,
     StudiosModule,
+    AgentToolsModule,
+    OllamaModule,
   ],
   controllers: [AppController],
   providers: [

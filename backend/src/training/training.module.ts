@@ -17,5 +17,6 @@ import {
   ],
   providers: [TrainingService],
   controllers: [TrainingController],
+  exports: [TrainingService],
 })
 export class TrainingModule {}

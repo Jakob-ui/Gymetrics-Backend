@@ -14,9 +14,6 @@ services:
       - mongodb_network
     logging:
       driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
 
    backend:
     build: ./backend
@@ -27,6 +24,8 @@ services:
       - JWT_REFRESH=${JWT_REFRESH}
       - SCRAPER_API_KEY=${SCRAPER_API_KEY}
       - MODE=AI
+      - OLLAMA_URL=http://192.168.68.104:11434
+      - OLLAMA_MODEL=ministral-3:3b
     ports:
       - 3000:3000
     depends_on:
@@ -61,7 +60,7 @@ services:
     networks:
       - mongodb_network
     
-   mcp-erver:
+   mcp-server:
     build: ./mcpServer
     container_name: mcp-server
     restart: always
