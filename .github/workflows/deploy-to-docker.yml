@@ -76,8 +76,8 @@ jobs:
             - name: Build and push production image
               uses: docker/build-push-action@v6
               with:
-                  context: backend
-                  file: backend/Dockerfile
+                  context: mcpServer
+                  file: mcpServer/Dockerfile
                   push: true
                   platforms: linux/amd64
                   tags: |
