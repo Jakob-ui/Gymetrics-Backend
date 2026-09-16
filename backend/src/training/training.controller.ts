@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
@@ -20,6 +21,7 @@ import { TrainingResponseDto } from './dtos/Response/training.response.dto';
 import { Training } from './schemas/training.schema';
 import { TrainingOverviewResponseDto } from './dtos/Response/training.overview.response.dto';
 import { TrainingQueryDto } from './dtos/Query/training.query.dto';
+import { TrainingDoneRequestDto } from './dtos/Request/trainingSave.request.dto';
 
 @Controller('training')
 export class TrainingController {
@@ -97,17 +99,23 @@ export class TrainingController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Set the boolean for an active Training to false' })
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Saves a whole training session in one go' })
   @ApiOkResponse({
     type: Boolean,
-    description: 'Monthly trainings for the user',
+    description: 'Completed one specific Training',
   })
   async completeTraining(
     @Request() req: appController.AuthenticatedRequest,
     @Param('id') trainingId: string,
+    @Body() finishedTraining: TrainingDoneRequestDto,
   ): Promise<boolean> {
     const userId = req.user.userId;
-    return await this.trainingService.completeTraining(userId, trainingId);
+    return await this.trainingService.completeTraining(
+      userId,
+      trainingId,
+      finishedTraining,
+    );
   }
 
   @Post(':id')
@@ -144,6 +152,7 @@ export class TrainingController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NOT_FOUND)
   @ApiOperation({ summary: 'Get details of a specific training' })
   @ApiOkResponse({
     type: [TrainingResponseDto],

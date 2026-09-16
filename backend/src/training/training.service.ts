@@ -14,6 +14,7 @@ import { ExerciseRequestDto } from './dtos/Request/trainingUpdate.request.dto';
 import { TrainingResponseDto } from './dtos/Response/training.response.dto';
 import { TrainingOverviewResponseDto } from './dtos/Response/training.overview.response.dto';
 import { Cron } from '@nestjs/schedule';
+import { TrainingDoneRequestDto } from './dtos/Request/trainingSave.request.dto';
 
 @Injectable()
 export class TrainingService {
@@ -107,7 +108,11 @@ export class TrainingService {
     }
   }
 
-  async completeTraining(userId: string, trainingId: string): Promise<boolean> {
+  async completeTraining(
+    userId: string,
+    trainingId: string,
+    trainingDone: TrainingDoneRequestDto,
+  ): Promise<boolean> {
     try {
       const training = await this.trainingModel.findOne({
         _id: new Types.ObjectId(trainingId),
@@ -116,13 +121,26 @@ export class TrainingService {
       if (!training) {
         throw new NotFoundException('Training not found');
       }
-      training.active = false;
+      for (const doneExercise of trainingDone.plan ?? []) {
+        const exercise = training.plan.find(
+          (ex) =>
+            ex.title === doneExercise.title ||
+            ex._id?.toString() === (doneExercise as any)._id,
+        );
 
+        if (exercise) {
+          exercise.repsDone = doneExercise.repsDone ?? exercise.repsDone;
+          exercise.weightDone = doneExercise.weightDone ?? exercise.weightDone;
+        }
+      }
+
+      training.active = trainingDone.active ?? false;
       await training.save();
+
       return true;
-    } catch (err) {
-      if (err instanceof NotFoundException) throw err;
-      throw new InternalServerErrorException(err);
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+      return false;
     }
   }
 
@@ -315,9 +333,8 @@ export class TrainingService {
   async deleteTraining(userId, trainingId): Promise<HttpStatus> {
     try {
       const result = await this.trainingModel.deleteOne({
-        userId,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        _id: trainingId,
+        userId: new Types.ObjectId(userId),
+        _id: new Types.ObjectId(trainingId),
       });
       if (result.deletedCount === 1) {
         return HttpStatus.NO_CONTENT;

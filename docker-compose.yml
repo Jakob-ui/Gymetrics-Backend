@@ -26,6 +26,7 @@ services:
       - MODE=AI
       - OLLAMA_URL=http://192.168.68.104:11434
       - OLLAMA_MODEL=ministral-3:3b
+      - ENABLE_SCRAPER=true
     ports:
       - 3000:3000
     depends_on:
@@ -44,21 +45,6 @@ services:
     networks:
       - mongodb_network
     restart: unless-stopped
-
-   mongo-express:
-    image: mongo-express
-    container_name: mongo-express
-    restart: always
-    ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_URL: mongodb://${DATABASE_ROOT_USERNAME}:${DATABASE_ROOT_PASSWORD}@mongodb:27017/?authSource=admin
-      ME_CONFIG_BASICAUTH_USERNAME: ${M_EXPRESS_USERNAME}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${M_EXPRESS_PASSWORD}
-    depends_on:
-      - mongodb
-    networks:
-      - mongodb_network
     
    mcp-server:
     build: ./mcpServer
