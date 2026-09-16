@@ -15,6 +15,8 @@ import { StudiosModule } from './studios/studios.module';
 import { AgentToolsModule } from './agent-tools/agent-tools.module';
 import { OllamaModule } from './ollama/ollama.module';
 
+const scraperEnabled = process.env.ENABLE_SCRAPER === 'true';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,7 +32,8 @@ import { OllamaModule } from './ollama/ollama.module';
     AuthModule,
     TrainingtemplatesModule,
     TrainingModule,
-    ScraperModule,
+    ...(scraperEnabled ? [ScraperModule] : []),
+    StudiosModule,
     StudiosModule,
     AgentToolsModule,
     OllamaModule,

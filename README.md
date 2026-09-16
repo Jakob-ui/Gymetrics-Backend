@@ -1,6 +1,6 @@
 # Gymetrics Backend
 
-Self-hosted fitness Tracker + AI assistant.
+Self-hosted fitness Tracker + AI assistant. For the frontend Application go to: [Gymetrics_App](https://github.com/Jakob-ui/Gymetrics_App)
 
 ## Quickstart
 
@@ -11,6 +11,8 @@ System Architecture
 ![Picture of System Architecture](./ressources/architecture_gymetrics.png)
 
 ## Docker Compose example Configuration
+
+**Tip:** Build your own docker-compose on [gymetrics.at](https://gymetrics.at)
 
 ```yaml
 services:
