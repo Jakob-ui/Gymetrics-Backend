@@ -125,7 +125,7 @@ export class TrainingService {
         const exercise = training.plan.find(
           (ex) =>
             ex.title === doneExercise.title ||
-            ex._id?.toString() === (doneExercise as any)._id,
+            ex._id?.toString() === doneExercise._id,
         );
 
         if (exercise) {
@@ -330,7 +330,10 @@ export class TrainingService {
     }
   }
 
-  async deleteTraining(userId, trainingId): Promise<HttpStatus> {
+  async deleteTraining(
+    userId: string,
+    trainingId: string,
+  ): Promise<HttpStatus> {
     try {
       const result = await this.trainingModel.deleteOne({
         userId: new Types.ObjectId(userId),

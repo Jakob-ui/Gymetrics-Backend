@@ -1,8 +1,9 @@
 export class ExerciseDoneRequestDto {
+  _id?: string;
   title: string;
   repsDone?: number;
   weightDone?: number;
-  constructor(init?: Partial<TrainingDoneRequestDto>) {
+  constructor(init?: Partial<ExerciseDoneRequestDto>) {
     Object.assign(this, init);
   }
 }
