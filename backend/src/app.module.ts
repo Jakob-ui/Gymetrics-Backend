@@ -32,7 +32,7 @@ const scraperEnabled = process.env.ENABLE_SCRAPER === 'true';
     AuthModule,
     TrainingtemplatesModule,
     TrainingModule,
-    ...scraperEnabled ? [ScraperModule] : [],
+    ...(scraperEnabled ? [ScraperModule] : []),
     StudiosModule,
     StudiosModule,
     AgentToolsModule,

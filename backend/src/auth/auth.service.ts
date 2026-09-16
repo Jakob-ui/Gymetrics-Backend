@@ -103,7 +103,9 @@ export class AuthService {
       }
       return userResponse;
     } catch (err) {
-      throw new InternalServerErrorException(err);
+      if (err instanceof BadRequestException) throw err;
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 

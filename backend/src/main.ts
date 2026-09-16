@@ -13,7 +13,7 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-  app.enableCors(); //Nachher wieder löschen bzw umkonfigurieren!!!!
+  app.enableCors({ origin: false });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

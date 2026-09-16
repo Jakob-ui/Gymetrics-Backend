@@ -152,7 +152,6 @@ export class TrainingController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NOT_FOUND)
   @ApiOperation({ summary: 'Get details of a specific training' })
   @ApiOkResponse({
     type: [TrainingResponseDto],

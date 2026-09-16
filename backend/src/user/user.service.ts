@@ -25,7 +25,8 @@ export class UserService {
       return User.mapToUserResponseDto(user);
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
-      throw new InternalServerErrorException(err);
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 
@@ -38,7 +39,8 @@ export class UserService {
       return User.mapToProfileResponseDto(user);
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
-      throw new InternalServerErrorException(err);
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 
@@ -55,7 +57,8 @@ export class UserService {
       return response;
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
-      throw new InternalServerErrorException(err);
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 
@@ -73,7 +76,8 @@ export class UserService {
       return User.mapToProfileResponseDto(user);
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
-      throw new InternalServerErrorException(err);
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 
@@ -90,7 +94,8 @@ export class UserService {
       }
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
-      throw new InternalServerErrorException(err);
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 
@@ -103,7 +108,8 @@ export class UserService {
       return true;
     } catch (err) {
       if (err instanceof NotFoundException) throw err;
-      throw new InternalServerErrorException(err);
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 
@@ -111,7 +117,8 @@ export class UserService {
     try {
       return await this.userModel.findOne({ email }).exec();
     } catch (err) {
-      throw new InternalServerErrorException(err);
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
     }
   }
 }
