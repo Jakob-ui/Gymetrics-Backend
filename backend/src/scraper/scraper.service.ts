@@ -26,7 +26,9 @@ export class ScraperService implements OnApplicationBootstrap {
 
   onApplicationBootstrap() {
     const apiKey = process.env.SCRAPER_API_KEY || '';
-    void this.scrapeFitnessStudioPages(apiKey);
+    this.scrapeFitnessStudioPages(apiKey).catch((err) => {
+      console.error('Initial scrape on bootstrap failed:', err);
+    });
   }
 
   @Cron('0 0 0 1 * *')

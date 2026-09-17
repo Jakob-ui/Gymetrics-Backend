@@ -218,7 +218,11 @@ export class TrainingtemplatesService {
         plan: generated.plan,
         generationStatus: 'ready',
       });
-    } catch {
+    } catch (err) {
+      console.error(
+        `AI generation failed for template ${templateId}:`,
+        err,
+      );
       await this.templateModel.findByIdAndUpdate(templateId, {
         generationStatus: 'failed',
       });
