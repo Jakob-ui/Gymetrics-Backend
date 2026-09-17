@@ -58,6 +58,7 @@ export class TrainingService {
         sets: exercise.sets,
         reps: exercise.reps,
         weight: exercise.weight,
+        setsDone: [],
         factor: exercise.factor,
       }));
 
@@ -97,8 +98,7 @@ export class TrainingService {
       if (!exercise) {
         throw new NotFoundException('Exercise not found');
       }
-      exercise.repsDone = newExercise.repsDone;
-      exercise.weightDone = newExercise.weightDone;
+      exercise.setsDone = newExercise.setsDone;
 
       await training.save();
       return training;
@@ -129,8 +129,7 @@ export class TrainingService {
         );
 
         if (exercise) {
-          exercise.repsDone = doneExercise.repsDone ?? exercise.repsDone;
-          exercise.weightDone = doneExercise.weightDone ?? exercise.weightDone;
+          exercise.setsDone = doneExercise.setsDone ?? exercise.setsDone;
         }
       }
 

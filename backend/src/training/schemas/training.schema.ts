@@ -5,6 +5,17 @@ import { User } from 'src/user/schemas/user.schema';
 import { TrainingResponseDto } from '../dtos/Response/training.response.dto';
 import { TrainingOverviewResponseDto } from '../dtos/Response/training.overview.response.dto';
 
+@Schema({ _id: false })
+export class SetDone {
+  @Prop({ required: true })
+  reps!: number;
+
+  @Prop({ required: true })
+  weight!: number;
+}
+
+export const SetDoneSchema = SchemaFactory.createForClass(SetDone);
+
 @Schema({ _id: true })
 export class Exercise {
   _id?: Types.ObjectId;
@@ -22,13 +33,10 @@ export class Exercise {
   reps!: number;
 
   @Prop({ required: false })
-  repsDone!: number;
-
-  @Prop({ required: false })
   weight!: number;
 
-  @Prop({ required: false })
-  weightDone!: number;
+  @Prop({ type: [SetDoneSchema], default: [] })
+  setsDone!: SetDone[];
 
   @Prop({ required: false })
   factor?: number;
@@ -96,9 +104,8 @@ export class Training extends Document {
         title: ex.title,
         sets: ex.sets,
         reps: ex.reps,
-        repsDone: ex.repsDone,
         weight: ex.weight,
-        weightDone: ex.weightDone,
+        setsDone: ex.setsDone?.map((s) => ({ reps: s.reps, weight: s.weight })),
         factor: ex.factor,
       })),
     });

@@ -8,6 +8,18 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+export class SetDoneRequestDto {
+  @IsNumber()
+  reps: number;
+
+  @IsNumber()
+  weight: number;
+
+  constructor(init?: Partial<SetDoneRequestDto>) {
+    Object.assign(this, init);
+  }
+}
+
 export class ExerciseDoneRequestDto {
   @IsOptional()
   @IsString()
@@ -18,12 +30,10 @@ export class ExerciseDoneRequestDto {
   title?: string;
 
   @IsOptional()
-  @IsNumber()
-  repsDone?: number;
-
-  @IsOptional()
-  @IsNumber()
-  weightDone?: number;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SetDoneRequestDto)
+  setsDone?: SetDoneRequestDto[];
 
   constructor(init?: Partial<ExerciseDoneRequestDto>) {
     Object.assign(this, init);

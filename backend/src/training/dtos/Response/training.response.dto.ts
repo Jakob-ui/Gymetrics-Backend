@@ -1,10 +1,17 @@
+export class SetDoneResponseDto {
+  reps: number;
+  weight: number;
+  constructor(init?: Partial<SetDoneResponseDto>) {
+    Object.assign(this, init);
+  }
+}
+
 export class ExerciseResponseDto {
   title: string;
   reps: number;
   sets?: number;
-  repsDone?: number;
   weight?: number;
-  weightDone?: number;
+  setsDone?: SetDoneResponseDto[];
   factor?: number;
   constructor(init?: Partial<TrainingResponseDto>) {
     Object.assign(this, init);
